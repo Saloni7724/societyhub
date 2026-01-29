@@ -1,12 +1,17 @@
-import React from 'react'
+import React, { memo } from 'react'
+import PropTypes from 'prop-types'
 
-function Login() {
+const Login = memo(function Login(props) {
   return (
     <div>
-      <p> This is Admin side</p>
-      df
+        <p> This is</p>
+      
     </div>
   )
+})
+
+Login.propTypes = {
+
 }
 
 export default Login
