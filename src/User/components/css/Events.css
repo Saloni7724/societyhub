@@ -1,0 +1,97 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+.dashboard {
+  display: flex;
+  height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 260px;
+  background: #3e4147;
+  color: white;
+  padding: 20px;
+}
+
+.sidebar h2 {
+  margin-bottom: 30px;
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar li {
+  padding: 12px;
+  margin-bottom: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border-radius: 25px;
+  cursor: pointer;
+}
+
+.sidebar li.active,
+.sidebar li:hover {
+  background: #7a7a7a;
+}
+
+/* Main */
+.main {
+  flex: 1;
+  background: white;
+  padding: 20px 30px;
+}
+
+/* Header */
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  margin-bottom: 30px;
+}
+
+.title {
+  margin-bottom: 10px;
+}
+
+/* Events Grid */
+.events-grid {
+  display: flex;
+  gap: 60px;
+  margin-top: 40px;
+}
+
+/* Event Card */
+.event-card {
+  background: #d7c7ec;
+  width: 350px;
+  padding: 20px;
+  border-radius: 2px;
+}
+
+.event-card h4 {
+  margin-bottom: 15px;
+}
+
+.event-card p {
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.event-card button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-top: 1px solid #000;
+  background: transparent;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
