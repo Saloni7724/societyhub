@@ -1,0 +1,99 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+.page {
+  display: flex;
+  height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 260px;
+  background: #123375;
+  color: white;
+  padding: 20px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar li {
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar li:hover {
+  background: #484eb3;
+}
+
+.sidebar .active {
+  background: #516897;
+}
+
+/* CONTENT */
+.content {
+  flex: 1;
+  padding: 30px;
+  background: #f5f5f5;
+}
+
+.page-title {
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* CARDS */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  padding: 20px;
+  border-radius: 6px;
+}
+
+.card h3 {
+  text-align: center;
+  border-bottom: 2px solid rgba(0,0,0,0.2);
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+}
+
+.card p {
+  margin: 6px 0;
+}
+
+.card span {
+  color: blue;
+  font-weight: bold;
+}
+
+/* CARD COLORS */
+.doctor { background: #f2bcbc; }
+.fire { background: #a8d29f; }
+.police { background: #d7df9b; }
+.security { background: #d1a0b8; }
+.secretary { background: #e0bfa5; }
+.custom1 { background: #7fd1b2; }
+.custom2 { background: #c6c1f7; }
