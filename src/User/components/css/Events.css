@@ -1,97 +1,145 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
+.events-page {
+  padding: 30px;
+  width: 100%;
+  font-family: "Poppins", sans-serif;
 }
 
-.dashboard {
-  display: flex;
-  height: 100vh;
+/* Title */
+.events-title {
+  text-align: center;
+  font-size: 30px;
+  font-weight: 700;
+  color: #222;
 }
 
-/* Sidebar */
-.sidebar {
-  width: 260px;
-  background: #3e4147;
-  color: white;
-  padding: 20px;
+.events-subtitle {
+  text-align: center;
+  margin-bottom: 35px;
+  color: #666;
+  font-size: 15px;
 }
 
-.sidebar h2 {
-  margin-bottom: 30px;
-}
-
-.sidebar ul {
-  list-style: none;
-}
-
-.sidebar li {
-  padding: 12px;
-  margin-bottom: 10px;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  border-radius: 25px;
-  cursor: pointer;
-}
-
-.sidebar li.active,
-.sidebar li:hover {
-  background: #7a7a7a;
-}
-
-/* Main */
-.main {
-  flex: 1;
-  background: white;
-  padding: 20px 30px;
-}
-
-/* Header */
-.page-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 20px;
-  margin-bottom: 30px;
-}
-
-.title {
-  margin-bottom: 10px;
-}
-
-/* Events Grid */
+/* Grid */
 .events-grid {
   display: flex;
-  gap: 60px;
-  margin-top: 40px;
+  justify-content: center;
+  gap: 25px;
+  flex-wrap: wrap;
 }
 
-/* Event Card */
+/* Card */
 .event-card {
-  background: #d7c7ec;
-  width: 350px;
-  padding: 20px;
-  border-radius: 2px;
+  width: 320px;
+  padding: 25px;
+  border-radius: 20px;
+  color: white;
+  background: linear-gradient(135deg, #ff512f, #dd2476);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+  transition: 0.4s ease;
+  position: relative;
 }
 
-.event-card h4 {
+.event-card:nth-child(2) {
+  background: linear-gradient(135deg, #24c6dc, #514a9d);
+}
+
+.event-card:hover {
+  transform: translateY(-8px) scale(1.02);
+}
+
+/* Text */
+.event-card h3 {
+  font-size: 20px;
   margin-bottom: 15px;
 }
 
 .event-card p {
-  margin-bottom: 15px;
   font-size: 14px;
+  margin: 6px 0;
 }
 
-.event-card button {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-top: 1px solid #000;
-  background: transparent;
+.amount {
   font-size: 18px;
   font-weight: bold;
+  margin-top: 10px;
+}
+
+/* Button */
+.details-btn {
+  margin-top: 18px;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 14px;
+  font-weight: bold;
   cursor: pointer;
+  background: white;
+  color: #222;
+  transition: 0.3s;
+}
+
+.details-btn:hover {
+  background: black;
+  color: white;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-box {
+  width: 420px;
+  background: white;
+  border-radius: 18px;
+  padding: 25px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-btn {
+  border: none;
+  background: red;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* Modal Body */
+.modal-body {
+  margin-top: 20px;
+  font-size: 15px;
+  color: #333;
+}
+
+/* Pay Button */
+.pay-btn {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: bold;
+  background: linear-gradient(135deg, #11998e, #38ef7d);
+  color: white;
+  cursor: pointer;
+}
+
+.pay-btn:hover {
+  opacity: 0.9;
 }

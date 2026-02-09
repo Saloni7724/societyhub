@@ -1,85 +1,95 @@
-import React from "react";
+import React, { useState } from "react";
 import "./css/Events.css";
-import {
-  FaUser,
-  FaClock,
-  FaTools,
-  FaPhone,
-  FaCalendarAlt,
-  FaUsers,
-  FaBell,
-  FaExclamationCircle,
-  FaBuilding
-} from "react-icons/fa";
 
 const Events = () => {
+  const [selectedEvent, setSelectedEvent] = useState(null);
+
+  const events = [
+    {
+      id: 1,
+      name: "Republic Day Celebration 🇮🇳",
+      date: "26 Jan 2026",
+      persons: 120,
+      amount: 300,
+    },
+    {
+      id: 2,
+      name: "Holi Celebration 🎨",
+      date: "04 Mar 2026",
+      persons: 200,
+      amount: 200,
+    },
+  ];
+
   return (
+    <div className="events-page">
+      {/* Title */}
+      <h2 className="events-title">✨ Society Events</h2>
+      <p className="events-subtitle">
+        Celebrate together and manage event payments easily.
+      </p>
 
-    
-    <div className="dashboard">
-
-      {/* Sidebar */}
-      <aside className="sidebar">
-        <h2><FaBuilding /> Society Name</h2>
-
-        <ul>
-          <li><FaUser /> My Profile</li>
-          <li><FaClock /> Pending Amount</li>
-          <li><FaTools /> Payment Maintenance</li>
-          <li><FaPhone /> Emergency Contact</li>
-          <li className="active"><FaCalendarAlt /> Events</li>
-          <li><FaUsers /> Resident List</li>
-          <li><FaBell /> Notification</li>
-          <li><FaExclamationCircle /> Add Complain</li>
-        </ul>
-      </aside>
-
-      {/* Main Content */}
-      <main className="main">
-        
-
-        {/* Header */}
-        <div className="page-header">
-          <h2><FaCalendarAlt /> Events</h2>
-        </div>
-        
-
-        <h3 className="title">Society Events</h3>
-        <hr />
-
-        {/* Event Cards */}
-        <div className="events-grid">
-
-          {/* Card 1 */}
-          <div className="event-card">
-            <h4>Republic day celebration</h4>
-
-            <p><FaCalendarAlt /> <strong>Date :</strong> 26 jan 2026</p>
+      {/* Cards */}
+      <div className="events-grid">
+        {events.map((event) => (
+          <div className="event-card" key={event.id}>
+            <h3>{event.name}</h3>
 
             <p>
-              <strong>Title :</strong><br />
-              Republic day celebration
+              <strong>Date:</strong> {event.date}
             </p>
-
-            <button>view</button>
-          </div>
-
-          {/* Card 2 */}
-          <div className="event-card">
-            <h4>Holi Celebration</h4>
-
-            <p><FaCalendarAlt /> <strong>Date :</strong> 04 mar 2026</p>
 
             <p>
-              <strong>Title :</strong><br />
-              Holi Celebration
+              <strong>Joining:</strong> {event.persons} Members
             </p>
 
-            <button>view</button>
-          </div>
+            <p className="amount">
+              ₹ {event.amount} Contribution
+            </p>
 
+            <button
+              className="details-btn"
+              onClick={() => setSelectedEvent(event)}
+            >
+              View Details →
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {/* Modal */}
+      {selectedEvent && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <div className="modal-header">
+              <h2>{selectedEvent.name}</h2>
+
+              <button
+                className="close-btn"
+                onClick={() => setSelectedEvent(null)}
+              >
+                ✖
+              </button>
+            </div>
+
+            <div className="modal-body">
+              <p>
+                <strong>Date:</strong> {selectedEvent.date}
+              </p>
+              <p>
+                <strong>Total Joining:</strong> {selectedEvent.persons}
+              </p>
+              <p>
+                <strong>Amount:</strong> ₹ {selectedEvent.amount}
+              </p>
+
+              <button className="pay-btn">
+                Pay Now ₹ {selectedEvent.amount}
+              </button>
+            </div>
+          </div>
         </div>
-      </main>
+      )}
     </div>
   );
 };

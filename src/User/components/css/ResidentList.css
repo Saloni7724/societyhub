@@ -1,0 +1,187 @@
+/* ResidentList.css */
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* App container */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background: linear-gradient(180deg, #ff7e5f, #feb47b); /* Vibrant orange gradient */
+  color: #fff;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar .logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar .menu {
+  list-style: none;
+}
+
+.sidebar .menu li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.sidebar .menu li:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.sidebar .menu li.active {
+  background-color: rgba(255, 255, 255, 0.4);
+  font-weight: bold;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 40px 30px;
+  background-color: #f0f2f5;
+}
+
+.main-content h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.6rem;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+/* Table */
+.resident-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.resident-table th,
+.resident-table td {
+  text-align: left;
+  padding: 15px 20px;
+}
+
+.resident-table thead {
+  background: linear-gradient(90deg, #ff6a00, #ee0979); /* Bold orange-pink gradient */
+  color: #fff;
+}
+
+.resident-table tbody tr:nth-child(even) {
+  background-color: #ffe6f0; /* Light pink for alternate rows */
+}
+
+.resident-table tbody tr:nth-child(odd) {
+  background-color: #fff; /* White for odd rows */
+}
+
+.resident-table tbody tr:hover {
+  background-color: rgba(255, 106, 0, 0.1); /* Highlight hover with orange */
+}
+
+/* Pagination */
+/* Pagination container */
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 6px; /* tighter gap for small buttons */
+  align-items: center;
+}
+
+/* All buttons */
+.pagination button {
+  width: 30px;         /* fixed small width */
+  height: 30px;        /* fixed small height */
+  font-size: 12px;     /* smaller text */
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;  /* subtle rounded corners */
+  background: linear-gradient(90deg, #36d1dc, #5b86e5); /* blue gradient */
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;          /* remove extra padding */
+  transition: 0.3s;
+}
+
+/* Previous & Next wider */
+.pagination button:first-child,
+.pagination button:last-child {
+  width: auto;         /* auto width for text */
+  padding: 0 12px;
+}
+
+/* Hover effect */
+.pagination button:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* Active page */
+.pagination button.active {
+  background: linear-gradient(90deg, #ff512f, #dd2476); /* red-pink gradient */
+  color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .app-container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  .sidebar .menu {
+    display: flex;
+    gap: 10px;
+  }
+
+  .sidebar .menu li {
+    flex: none;
+  }
+
+  .main-content {
+    padding: 20px;
+  }
+
+  .resident-table th,
+  .resident-table td {
+    padding: 10px 12px;
+  }
+}

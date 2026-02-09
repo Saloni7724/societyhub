@@ -1,89 +1,107 @@
 import React from "react";
 import "./css/EmergencyContact.css";
+
 import {
-  FaUser,
-  FaMoneyBill,
-  FaTools,
+  FaUserMd,
+  FaFireExtinguisher,
+  FaGavel,
+  FaShieldAlt,
+  FaUserTie,
   FaPhoneAlt,
-  FaCalendarAlt,
-  FaUsers,
-  FaBell,
-  FaCommentDots,
-  FaBuilding,
 } from "react-icons/fa";
 
 const EmergencyContact = () => {
+  const contacts = [
+    {
+      title: "Doctor",
+      icon: <FaUserMd />,
+      name: "Dr. Hannan Yunusbhai",
+      flat: "A-201",
+      phone: "9845674321",
+      color: "card-doctor",
+    },
+    {
+      title: "Fire Brigade",
+      icon: <FaFireExtinguisher />,
+      phone: "112",
+      color: "card-fire",
+    },
+    {
+      title: "Police",
+      icon: <FaGavel />,
+      phone: "100",
+      color: "card-police",
+    },
+    {
+      title: "Security",
+      icon: <FaShieldAlt />,
+      name: "Ramukaka",
+      phone: "9754092345",
+      color: "card-security",
+    },
+    {
+      title: "Secretary",
+      icon: <FaUserTie />,
+      name: "Rameshbhai",
+      flat: "B-104",
+      phone: "9745761209",
+      color: "card-secretary",
+    },
+    {
+      title: "Custom Number",
+      icon: <FaPhoneAlt />,
+      name: "Sureshbhai",
+      flat: "A-302",
+      phone: "9809985676",
+      color: "card-custom",
+    },
+  ];
+
   return (
-    <div className="page">
-      {/* SIDEBAR */}
-      <div className="sidebar">
-        <h2 className="logo">
-          <FaBuilding /> Society Name
-        </h2>
+    <div className="emergency-container">
+      <h2 className="emergency-title">Emergency Contacts</h2>
 
-        <ul>
-          <li><FaUser /> My Profile</li>
-          <li><FaMoneyBill /> Pending Amount</li>
-          <li><FaTools /> Payment Maintenance</li>
-          <li className="active"><FaPhoneAlt /> Emergency Contact</li>
-          <li><FaCalendarAlt /> Events</li>
-          <li><FaUsers /> Resident List</li>
-          <li><FaBell /> Notification</li>
-          <li><FaCommentDots /> Add Complain</li>
-        </ul>
-      </div>
+      <div className="emergency-grid">
+        {contacts.map((item, index) => (
+          <div className={`emergency-card ${item.color}`} key={index}>
+            
+            <div className="card-icon">{item.icon}</div>
 
-      {/* MAIN CONTENT */}
-      <div className="content">
-        <h2 className="page-title">
-          <FaPhoneAlt /> Emergency Contact
-        </h2>
+            <h3>{item.title}</h3>
 
-        <div className="cards">
-          <div className="card doctor">
-            <h3>Doctor</h3>
-            <p>Name : DR. Hannan Yunusbhai</p>
-            <p>Flat No : A-201</p>
-            <p>Contact : <span>9845674321</span></p>
+            {item.name && (
+              <p>
+                <span>Name:</span> {item.name}
+              </p>
+            )}
+
+            {item.flat && (
+              <p>
+                <span>Flat:</span> {item.flat}
+              </p>
+            )}
+
+            <p className="phone">
+              <span>Contact:</span> {item.phone}
+            </p>
+
+            {/* ✅ Buttons */}
+            <div className="btn-row">
+              <a href={`tel:${item.phone}`} className="call-btn">
+                📞 Call
+              </a>
+
+              <a
+                href={`https://wa.me/91${item.phone}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="whatsapp-btn"
+              >
+                💬 WhatsApp
+              </a>
+            </div>
           </div>
-
-          <div className="card fire">
-            <h3>Fire Brigade</h3>
-            <p>Contact : <span>112</span></p>
-          </div>
-
-          <div className="card police">
-            <h3>Police</h3>
-            <p>Contact : <span>100</span></p>
-          </div>
-
-          <div className="card security">
-            <h3>Security</h3>
-            <p>Name : Ramukaka</p>
-            <p>Contact : <span>9754092345</span></p>
-          </div>
-
-          <div className="card secretary">
-            <h3>Secretary</h3>
-            <p>Name : Rameshbhai</p>
-            <p>Flat No : B-104</p>
-            <p>Contact : <span>9745761209</span></p>
-          </div>
-
-          <div className="card custom1">
-            <h3>Custom number</h3>
-            <p>Name : SureshBhai</p>
-            <p>Flat No : A-302</p>
-            <p>Contact : <span>9809985676</span></p>
-          </div>
-
-          <div className="card custom2">
-            <h3>Custom number</h3>
-            <p>Name : BharatBhai</p>
-            <p>Flat No : B-401</p>
-            <p>Contact : <span>9125629867</span></p>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );
