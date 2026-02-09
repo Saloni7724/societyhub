@@ -1,0 +1,78 @@
+/* FULL BACKGROUND */
+.society-bg {
+  height: 100vh;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 80px;
+}
+
+/* FORM CARD OVER IMAGE */
+.society-form-card {
+  width: 500px;
+  background: #ffffff;
+  padding: 45px;
+  border-radius: 20px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* TITLE */
+.society-form-card h2 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #3a9b5f;
+  margin-bottom: 30px;
+}
+
+/* FORM */
+.society-form-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* INPUTS */
+.society-form-card input,
+.society-form-card textarea {
+  padding: 14px 16px;
+  font-size: 15px;
+  border-radius: 12px;
+  border: 1px solid #d9e1ec;
+  outline: none;
+}
+
+.society-form-card textarea {
+  resize: none;
+  height: 90px;
+}
+
+/* BUTTON */
+.society-form-card button {
+  margin-top: 10px;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  background: #4caf6d;
+  color: #ffffff;
+  transition: 0.3s ease;
+}
+
+.society-form-card button:hover {
+  background: #3f9b5f;
+}
+/* AUTO GENERATED CODE INPUT */
+.auto-code {
+  background: #f3f6fb;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #3a9b5f;
+  cursor: not-allowed;
+}

@@ -1,0 +1,97 @@
+.home-container {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 80px;
+
+  --bg-image: none;
+}
+
+.home-container::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: var(--bg-image);
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px);
+  z-index: -1;
+  
+}
+
+/* TITLE */
+.title {
+  font-size: 32px;
+  color: #0a1ea8;
+  margin-bottom: 40px;
+  font-weight: bold;
+  z-index: 1;
+  text-align: center;
+}
+
+/* CARDS */
+.card-wrapper {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+  justify-content: center;
+  z-index: 1;
+}
+
+.card {
+  width: 260px;
+  padding: 30px;
+  border-radius: 18px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin { background: #1d2f5f; color: white; }
+.user { background: #4a6cf7; color: white; }
+.residency { background: #e5e5e5; color: black; }
+
+/* LOGO ICON ABOVE TEXT */
+.card-logo {
+  font-size: 48px; /* 🔹 bigger logo */
+  margin-bottom: 15px;
+}
+
+/* BUTTONS */
+.btn {
+  margin-top: 20px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+.transparent-panel {
+  background: rgba(255, 255, 255, 0.25); /* transparency */
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  border-radius: 22px;
+  padding: 40px 50px;
+
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.admin-btn { background: #ff7043; color: white; }
+.user-btn { background: #2ecc71; color: white; }
+.residency-btn { background: #3b82f6; color: white; }
