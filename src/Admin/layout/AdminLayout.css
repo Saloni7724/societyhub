@@ -1,0 +1,143 @@
+/* ================= ADMIN LAYOUT ================= */
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f5f7fb;
+}
+
+/* ================= SIDEBAR ================= */
+.admin-sidebar {
+  width: 260px;
+  background: #111827;
+  color: #ffffff;
+  padding: 25px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-sidebar .avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 20px;
+  border: 2px solid #4f46e5;
+}
+
+.admin-sidebar .avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* NAV */
+.admin-sidebar .menu-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background: transparent;
+  border: none;
+  color: #d1d5db;
+  font-size: 14.5px;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: all 0.25s ease;
+}
+
+.admin-sidebar .menu-item:hover {
+  background: #1f2937;
+  color: #ffffff;
+}
+
+.admin-sidebar .menu-item.active {
+  background: #4f46e5;
+  color: #ffffff;
+}
+
+/* ================= MAIN ================= */
+.admin-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 25px 30px;
+  overflow-y: auto;
+  position: relative; /* ✅ ADD THIS */
+}
+
+
+/* ================= HEADER ================= */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.admin-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* ================= PROFILE ================= */
+.admin-profile {
+  position: relative;
+}
+
+.admin-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.admin-trigger img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #4f46e5;
+}
+
+.admin-trigger svg {
+  color: #374151;
+}
+
+/* ================= DROPDOWN ================= */
+.admin-dropdown {
+  position: absolute;
+  right: 0;
+  top: 52px;
+  width: 180px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  padding: 8px 0;
+  z-index: 20;
+}
+
+.admin-dropdown button {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #111827;
+  cursor: pointer;
+}
+
+.admin-dropdown button:hover {
+  background: #f3f4f6;
+}
+
+.admin-dropdown .logout {
+  color: #dc2626;
+}
+html, body {
+  margin: 0;
+  padding: 0;
+}
