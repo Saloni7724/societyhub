@@ -1,99 +1,126 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
+.notification-page {
+  min-height: 100vh;
+  padding: 50px;
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(to right, #f8fafc, #eef2ff);
 }
 
-.app-container {
-  display: flex;
-  height: 100vh;
-}
-
-/* Sidebar */
-.sidebar {
-  width: 260px;
-  background-color: #290986;
-  color: #fff;
-  padding: 20px;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border-bottom: 1px solid #777;
-  padding-bottom: 10px;
-  margin-bottom: 20px;
-}
-
-.menu {
-  list-style: none;
-}
-
-.menu li {
-  padding: 12px 10px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  border-radius: 6px;
-}
-
-.menu li:hover,
-.menu li.active {
-  background-color: #6b6e74;
-}
-
-/* Main Content */
-.main-content {
-  flex: 1;
-  padding: 30px;
-  background-color: #fff;
-}
-
-.main-content h3 {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-/* Notification Box */
-.notification-box {
-  border: 1px solid #000;
-}
-
-.notification-item {
-  padding: 20px;
-  border-bottom: 1px solid #aaa;
-}
-
-.notification-item:last-child {
-  border-bottom: none;
-}
-
-.tag {
-  display: inline-block;
-  padding: 6px 14px;
-  color: #000;
+/* Title */
+.notification-title {
+  text-align: center;
+  font-size: 34px;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 45px;
+  color: #0f172a;
 }
 
-.blue {
-  background-color: #89a9d8;
+/* Wrapper */
+.notification-wrapper {
+  max-width: 950px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
 }
 
-.green {
-  background-color: #2ecc71;
+/* Card */
+.notify-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 22px 25px;
+  border-radius: 18px;
+  position: relative;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.08);
+  transition: 0.35s ease;
+  overflow: hidden;
 }
 
-.red {
-  background-color: #d9534f;
+/* Hover Effect */
+.notify-card:hover {
+  transform: translateY(-7px) scale(1.02);
 }
 
-.date {
-  color: red;
-  margin-bottom: 8px;
+/* Gradient Left Border */
+.notify-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 7px;
+  height: 100%;
+  border-radius: 18px 0 0 18px;
+}
+
+/* Icon */
+.notify-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  color: white;
+  flex-shrink: 0;
+}
+
+/* Content */
+.notify-info h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.notify-info span {
+  font-size: 14px;
+  color: #64748b;
+  display: block;
+  margin: 4px 0;
+}
+
+.notify-info p {
+  margin: 0;
+  font-size: 15px;
+  color: #334155;
+  line-height: 1.5;
+}
+
+/* Badge */
+.notify-badge {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: black;
+  color: white;
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* Color Themes */
+.notify-card.blue::before {
+  background: linear-gradient(to bottom, #3b82f6, #2563eb);
+}
+.notify-card.blue .notify-icon {
+  background: linear-gradient(to right, #3b82f6, #2563eb);
+}
+
+.notify-card.green::before {
+  background: linear-gradient(to bottom, #22c55e, #16a34a);
+}
+.notify-card.green .notify-icon {
+  background: linear-gradient(to right, #22c55e, #16a34a);
+}
+
+.notify-card.red::before {
+  background: linear-gradient(to bottom, #ef4444, #dc2626);
+}
+.notify-card.red .notify-icon {
+  background: linear-gradient(to right, #ef4444, #dc2626);
 }

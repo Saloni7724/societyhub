@@ -19,7 +19,15 @@ import {
 import Profile from "./Profile";
 import PendingAmount from "./PendingAmount";
 import EmergencyContact from "./EmergencyContact";
-import Events from "./Events"; // ✅ EVENTS IMPORT ADDED
+import Events from "./Events";
+import PaymentMaintenance from "./PaymentMaintenance";
+import ResidentList from "./ResidentList";
+
+/* ✅ Import Notification Page */
+import Notifications from "./Notification";
+
+/* ✅ Import Complaint Page */
+import Complaint from "./Complaint";
 
 const Dashboard = () => {
   const [activePage, setActivePage] = useState("dashboard");
@@ -89,7 +97,7 @@ const Dashboard = () => {
             <span>Emergency Contact</span>
           </li>
 
-          {/* ✅ Events Page */}
+          {/* Events */}
           <li
             className={activePage === "events" ? "active" : ""}
             onClick={() => setActivePage("events")}
@@ -116,7 +124,7 @@ const Dashboard = () => {
             <span>Notification</span>
           </li>
 
-          {/* Complaint */}
+          {/* ✅ Complaint */}
           <li
             className={activePage === "complain" ? "active" : ""}
             onClick={() => setActivePage("complain")}
@@ -135,14 +143,6 @@ const Dashboard = () => {
 
       {/* ================= Main Content ================= */}
       <main className="main-content">
-        
-        {/* Header */}
-        <header className="top-header">
-          <h2>
-            Hello Admin <span>👋</span>
-          </h2>
-          <FaUserCircle className="profile-icon" />
-        </header>
 
         {/* Right Side Page Body */}
         <div className="page-body">
@@ -158,31 +158,24 @@ const Dashboard = () => {
           {/* Pending Amount Page */}
           {activePage === "pending" && <PendingAmount />}
 
-          {/* Payment Maintenance */}
-          {activePage === "payment" && (
-            <h2>Payment Maintenance Page 🔧</h2>
-          )}
+          {/* Payment Maintenance Page */}
+          {activePage === "payment" && <PaymentMaintenance />}
 
           {/* Emergency Contact Page */}
           {activePage === "contact" && <EmergencyContact />}
 
-          {/* ✅ Events Page Open Right Side */}
+          {/* Events Page */}
           {activePage === "events" && <Events />}
 
-          {/* Resident List */}
-          {activePage === "residents" && (
-            <h2>Resident List Page 👥</h2>
-          )}
+          {/* Resident List Page */}
+          {activePage === "residents" && <ResidentList />}
 
-          {/* Notification */}
-          {activePage === "notification" && (
-            <h2>Notification Page 🔔</h2>
-          )}
+          {/* Notification Page */}
+          {activePage === "notification" && <Notifications />}
 
-          {/* Complaint */}
-          {activePage === "complain" && (
-            <h2>Add Complaint Page 💬</h2>
-          )}
+          {/* ✅ Complaint Page Opens Here */}
+          {activePage === "complain" && <Complaint />}
+
         </div>
       </main>
     </div>

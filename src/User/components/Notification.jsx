@@ -1,72 +1,84 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./css/Notification.css";
-import {
-  FaUser,
-  FaClock,
-  FaTools,
-  FaPhone,
-  FaCalendarAlt,
-  FaUsers,
-  FaBell,
-  FaExclamationCircle,
-  FaBuilding
-} from "react-icons/fa";
 
-const Notification = () => {
+/* ✅ Popup Component */
+import NotificationPopup from "./NotificationPopup";
+
+import { FaBell, FaWater, FaFlag } from "react-icons/fa";
+
+const Notifications = () => {
+  const [showPopup, setShowPopup] = useState(false);
+
+  useEffect(() => {
+    setShowPopup(true);
+  }, []);
+
+  const notificationData = [
+    {
+      title: "Maintenance Reminder",
+      date: "22 Jan 2026",
+      message:
+        "Please pay monthly maintenance fees before the end of this month.",
+      icon: <FaBell />,
+      type: "blue",
+    },
+    {
+      title: "Republic Day Celebration",
+      date: "26 Jan 2026",
+      message:
+        "Join us in the society garden on 26th January at 9:00 AM.",
+      icon: <FaFlag />,
+      type: "green",
+    },
+    {
+      title: "Water Supply Disruption",
+      date: "29 Jan 2026",
+      message:
+        "Water supply will be disrupted from 10:00 AM to 5:00 PM due to maintenance work.",
+      icon: <FaWater />,
+      type: "red",
+    },
+  ];
+
   return (
-    <div className="app-container">
-      {/* Sidebar */}
-      <div className="sidebar">
-        <h2 className="logo">
-          <FaBuilding /> Society Name
-        </h2>
+    <div className="notification-page">
+      {/* ✅ Popup */}
+      {showPopup && (
+        <NotificationPopup
+          message="New Notification Received!"
+          onClose={() => setShowPopup(false)}
+        />
+      )}
 
-        <ul className="menu">
-          <li><FaUser /> My Profile</li>
-          <li><FaClock /> Pending Amount</li>
-          <li><FaTools /> Payment Maintenance</li>
-          <li><FaPhone /> Emergency Contact</li>
-          <li><FaCalendarAlt /> Events</li>
-          <li><FaUsers /> Resident List</li>
-          <li className="active"><FaBell /> Notification</li>
-          <li><FaExclamationCircle /> Add Complain</li>
-        </ul>
-      </div>
+      {/* Title */}
+      <h2 className="notification-title">
+        🔔 Society Notifications
+      </h2>
 
-      {/* Main Content */}
-      <div className="main-content">
-        <h3><FaBell /> Notification</h3>
+      {/* Notification List */}
+      <div className="notification-wrapper">
+        {notificationData.map((item, index) => (
+          <div key={index} className={`notify-card ${item.type}`}>
+            
+            {/* Icon Box */}
+            <div className="notify-icon">
+              {item.icon}
+            </div>
 
-        <div className="notification-box">
-          <div className="notification-item">
-            <span className="tag blue">Maintenance reminder</span>
-            <p className="date">22 jan 2026</p>
-            <p>
-              Reminder to monthly maintenance fees by the end of this Month.
-            </p>
+            {/* Content */}
+            <div className="notify-info">
+              <h3>{item.title}</h3>
+              <span>{item.date}</span>
+              <p>{item.message}</p>
+            </div>
+
+            {/* Badge */}
+            <div className="notify-badge">NEW</div>
           </div>
-
-          <div className="notification-item">
-            <span className="tag green">Republic day celebration</span>
-            <p className="date">26 jan 2026</p>
-            <p>
-              Join us for republic day at the society garden area on 26th January
-              at 9:00 Am
-            </p>
-          </div>
-
-          <div className="notification-item">
-            <span className="tag red">Water supply disruption</span>
-            <p className="date">29 jan 2026</p>
-            <p>
-              Due to maintenance work, water supply will be disrupted on 29th
-              January from 10:00 Am to 5:00 pm.
-            </p>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );
 };
 
-export default Notification;
+export default Notifications;

@@ -1,185 +1,270 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
-
+/* 🌈 Full Page Premium Background */
 .profile-page {
-  font-family: "Poppins", sans-serif;
   min-height: 100vh;
-  background: linear-gradient(to right, #f8fbff, #eef3ff);
-  padding: 40px;
+  background: radial-gradient(circle at top left, #a78bfa, transparent),
+              radial-gradient(circle at bottom right, #38bdf8, transparent),
+              linear-gradient(to right, #f8fafc, #eef2ff);
+  font-family: "Poppins", sans-serif;
+  padding: 50px 20px;
 }
 
-/* Header */
+/* ✅ Header Styling */
 .profile-header {
   text-align: center;
   margin-bottom: 40px;
 }
 
 .profile-header h1 {
-  font-size: 36px;
-  font-weight: 600;
-  color: #2b2d42;
+  font-size: 38px;
+  font-weight: 800;
+  background: linear-gradient(to right, #6a00ff, #00c6ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .profile-header p {
   font-size: 16px;
-  color: gray;
+  color: #475569;
+  margin-top: 6px;
 }
 
-/* Main Card */
+/* ✅ Main Profile Card */
 .profile-card {
-  width: 75%;
+  max-width: 1050px;
   margin: auto;
   display: flex;
-  background: white;
-  border-radius: 20px;
+  border-radius: 25px;
   overflow: hidden;
-  box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.15);
+
+  /* Glassmorphism */
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(15px);
+
+  box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
-/* Left Section */
+/* 🎨 Left Gradient Panel */
 .profile-left {
   width: 35%;
-  background: linear-gradient(180deg, #2b2dff, #6a11cb);
+  background: linear-gradient(160deg, #6a00ff, #ff3d81, #00c6ff);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
   color: white;
   text-align: center;
-  padding: 40px 20px;
 }
 
+/* Profile Image */
 .profile-image {
-  width: 120px;
-  height: 120px;
+  width: 130px;
+  height: 130px;
   border-radius: 50%;
-  border: 4px solid white;
+  border: 5px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0px 0px 25px rgba(255, 255, 255, 0.5);
   margin-bottom: 15px;
 }
 
+/* Name */
 .profile-left h2 {
-  font-size: 22px;
-  margin-bottom: 10px;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 5px;
 }
 
+/* Flat */
 .flat {
   font-size: 15px;
   opacity: 0.9;
 }
 
-/* Right Section */
+/* ✅ Right Side Content */
 .profile-right {
   width: 65%;
-  padding: 40px;
+  padding: 50px;
 }
 
 .profile-right h3 {
-  font-size: 22px;
+  font-size: 28px;
+  font-weight: 800;
+  color: #1e293b;
   margin-bottom: 25px;
-  color: #2b2d42;
+  position: relative;
 }
 
-/* Info Boxes */
+/* Underline Effect */
+.profile-right h3::after {
+  content: "";
+  width: 90px;
+  height: 4px;
+  background: linear-gradient(to right, #6a00ff, #00c6ff);
+  display: block;
+  margin-top: 8px;
+  border-radius: 10px;
+}
+
+/* ✅ Info Boxes */
 .info-box {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 18px;
+  padding: 18px 22px;
+  margin-bottom: 18px;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 18px 20px;
-  background: #f4f7ff;
-  border-radius: 15px;
-  margin-bottom: 18px;
-  transition: 0.3s;
+
+  border: 1px solid rgba(106, 0, 255, 0.15);
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.08);
+
+  transition: 0.35s ease;
 }
 
+/* Hover Animation */
 .info-box:hover {
-  transform: translateX(8px);
-  background: #e6ecff;
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0px 12px 25px rgba(106, 0, 255, 0.18);
 }
 
+/* Labels */
 .info-box span {
-  font-weight: 500;
-  color: #444;
-}
-
-.info-box p {
-  font-weight: 600;
-  color: #2b2dff;
-}
-
-/* Button */
-.edit-btn {
-  margin-top: 20px;
-  width: 100%;
-  padding: 14px;
-  border: none;
-  border-radius: 15px;
-  background: linear-gradient(to right, #2b2dff, #6a11cb);
-  color: white;
   font-size: 16px;
+  font-weight: 600;
+  color: #334155;
+}
+
+/* Values */
+.info-box p {
+  font-size: 16px;
+  font-weight: 700;
+  background: linear-gradient(to right, #6a00ff, #00c6ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ✨ Edit Button */
+.edit-btn {
+  width: 100%;
+  margin-top: 30px;
+  padding: 16px;
+  border: none;
+  border-radius: 16px;
   cursor: pointer;
-  transition: 0.3s;
+
+  font-size: 17px;
+  font-weight: 700;
+  color: white;
+
+  background: linear-gradient(to right, #6a00ff, #ff3d81, #00c6ff);
+  box-shadow: 0px 10px 25px rgba(106, 0, 255, 0.3);
+
+  transition: 0.35s ease;
 }
 
 .edit-btn:hover {
-  opacity: 0.9;
-  transform: scale(1.03);
+  transform: scale(1.04);
+  opacity: 0.95;
 }
-/* Edit Form */
+
+/* ========================= */
+/* ✅ Edit Form Styling */
+/* ========================= */
+
 .edit-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .edit-form label {
-  font-weight: 500;
-  color: #333;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
 }
 
+/* Inputs */
 .edit-form input,
 .edit-form select {
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  outline: none;
+  padding: 13px;
+  border-radius: 14px;
+  border: 1px solid rgba(106, 0, 255, 0.25);
   font-size: 15px;
+  outline: none;
+  transition: 0.3s;
 }
 
 .edit-form input:focus,
 .edit-form select:focus {
-  border-color: #2b2dff;
+  border-color: #6a00ff;
+  box-shadow: 0px 0px 12px rgba(106, 0, 255, 0.25);
 }
 
-/* Button Group */
+/* Buttons Group */
 .btn-group {
   display: flex;
-  gap: 15px;
-  margin-top: 15px;
+  gap: 18px;
+  margin-top: 22px;
 }
 
 /* Save Button */
 .save-btn {
   flex: 1;
-  padding: 12px;
+  padding: 14px;
   border: none;
-  border-radius: 12px;
-  background: #2b2dff;
-  color: white;
-  font-size: 15px;
+  border-radius: 14px;
   cursor: pointer;
+
+  font-size: 15px;
+  font-weight: 700;
+  color: white;
+
+  background: linear-gradient(to right, #22c55e, #16a34a);
+  box-shadow: 0px 8px 18px rgba(34, 197, 94, 0.3);
+
+  transition: 0.3s;
 }
 
 .save-btn:hover {
-  opacity: 0.9;
+  transform: scale(1.05);
 }
 
 /* Cancel Button */
 .cancel-btn {
   flex: 1;
-  padding: 12px;
+  padding: 14px;
   border: none;
-  border-radius: 12px;
-  background: #ff4d4d;
-  color: white;
-  font-size: 15px;
+  border-radius: 14px;
   cursor: pointer;
+
+  font-size: 15px;
+  font-weight: 700;
+  color: rgb(0, 0, 0);
+
+  background: linear-gradient(to right, #ef4444, #b91c1c);
+  box-shadow: 0px 8px 18px rgba(239, 68, 68, 0.3);
+
+  transition: 0.3s;
 }
 
 .cancel-btn:hover {
-  opacity: 0.9;
+  transform: scale(1.05);
+}
+
+/* 📱 Responsive Design */
+@media (max-width: 768px) {
+  .profile-card {
+    flex-direction: column;
+  }
+
+  .profile-left,
+  .profile-right {
+    width: 100%;
+    text-align: center;
+  }
+
+  .btn-group {
+    flex-direction: column;
+  }
 }
