@@ -127,15 +127,17 @@ const AdminLayout = ({ children, active }) => {
                 <button>
                   <FiUser /> Profile
                 </button>
-                <button
-                  className="logout"
-                  onClick={() => {
-                    localStorage.removeItem("isAdminLoggedIn");
-                    navigate("/");
-                  }}
-                >
-                  <FiLogOut /> Logout
-                </button>
+               <button
+  className="logout"
+  onClick={() => {
+    localStorage.removeItem("isAdminLoggedIn");
+    navigate("/home");
+  }}
+>
+  <FiLogOut /> Logout
+</button>
+
+
               </div>
             )}
           </div>

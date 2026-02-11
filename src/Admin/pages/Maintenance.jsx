@@ -10,6 +10,7 @@ const Maintenance = () => {
   const [formData, setFormData] = useState({
     amount: "",
     profession: "",
+     month: "",
   });
 
   const [error, setError] = useState("");
@@ -22,7 +23,7 @@ const Maintenance = () => {
 
   const closeModal = () => {
     setShowModal(false);
-    setFormData({ amount: "", profession: "" });
+    setFormData({ amount: "", profession: "" ,  month: "" , });
     setError("");
   };
 
@@ -115,7 +116,13 @@ const Maintenance = () => {
 
               <div className="modal-body">
                 <label>Month</label>
-                <input value="April 2024" disabled />
+<input
+  type="text"
+  name="month"
+  placeholder="Enter month"
+  value={formData.month}
+  onChange={handleChange}
+/>
 
                 <label>Amount</label>
                 <input

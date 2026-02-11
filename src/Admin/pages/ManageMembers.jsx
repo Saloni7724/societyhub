@@ -16,35 +16,23 @@ import {
   FiEyeOff,
 } from "react-icons/fi";
 
-/* ------------------ DUMMY DATA ------------------ */
-const membersData = [
-  {
-    flat: "001",
-    name: "Patel Saloni",
-    phone: "+919876874756",
-    email: "saloni@gmail.com",
-    familyCount: "4",
-    profession: "Job",
-    type: "IT",
-    password: "",
-  },
-  {
-    flat: "002",
-    name: "Amit Shah",
-    phone: "+919988776655",
-    email: "amit@gmail.com",
-    familyCount: "3",
-    profession: "Business",
-    type: "Shop",
-    password: "",
-  },
-];
+import { db } from "../Backend/firebase-init";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc,
+  updateDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 
 function ManageMembers() {
   const navigate = useNavigate();
   const filterRef = useRef(null);
+  
 
-  const [members, setMembers] = useState(membersData);
+  const [members, setMembers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
@@ -65,6 +53,20 @@ function ManageMembers() {
     type: "",
     showPassword: false,
   });
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (
+      filterRef.current &&
+      !filterRef.current.contains(event.target)
+    ) {
+      setShowFilter(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () =>
+    document.removeEventListener("mousedown", handleClickOutside);
+}, []);
 
   /* ------------------ AUTH CHECK ------------------ */
   useEffect(() => {
@@ -72,17 +74,18 @@ function ManageMembers() {
     if (!isLoggedIn) navigate("/");
   }, [navigate]);
 
-  /* ------------------ OUTSIDE CLICK (FILTER) ------------------ */
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (filterRef.current && !filterRef.current.contains(e.target)) {
-        setShowFilter(false);
-      }
-    };
+  /* ------------------ FETCH MEMBERS ------------------ */
+  const fetchMembers = async () => {
+    const snapshot = await getDocs(collection(db, "members"));
+    const list = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    setMembers(list);
+  };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
+  useEffect(() => {
+    fetchMembers();
   }, []);
 
   /* ------------------ FILTER + SORT ------------------ */
@@ -122,14 +125,14 @@ function ManageMembers() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = () => {
+  /* ------------------ ADD / UPDATE ------------------ */
+  const handleSubmit = async () => {
     if (
       !formData.name ||
       !formData.email ||
       !formData.phone ||
       !formData.flat ||
       !formData.familyCount ||
-      !formData.password ||
       !formData.profession ||
       !formData.type
     ) {
@@ -137,29 +140,52 @@ function ManageMembers() {
       return;
     }
 
-    if (isEdit) {
-      const updated = [...members];
-      updated[editIndex] = formData;
-      setMembers(updated);
-    } else {
-      setMembers([...members, formData]);
-    }
+    try {
+      if (isEdit) {
+        const memberRef = doc(db, "members", editIndex);
+        await updateDoc(memberRef, {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          flat: formData.flat,
+          familyCount: formData.familyCount,
+          profession: formData.profession,
+          type: formData.type,
+        });
+      } else {
+        await addDoc(collection(db, "members"), {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          flat: formData.flat,
+          familyCount: formData.familyCount,
+          profession: formData.profession,
+          type: formData.type,
+          createdAt: serverTimestamp(),
+        });
+      }
 
-    setShowModal(false);
-    resetForm();
+      await fetchMembers();
+      setShowModal(false);
+      resetForm();
+    } catch (error) {
+      console.error(error);
+      alert("Error saving member");
+    }
   };
 
-  const handleDelete = (index) => {
-    if (window.confirm("Delete this member?")) {
-      setMembers(members.filter((_, i) => i !== index));
-    }
+  /* ------------------ DELETE ------------------ */
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this member?")) return;
+    await deleteDoc(doc(db, "members", id));
+    fetchMembers();
   };
 
-  const openEdit = (member, index) => {
+  const openEdit = (member) => {
     setFormData({ ...member, showPassword: false });
     setIsEdit(true);
     setIsReadOnly(false);
-    setEditIndex(index);
+    setEditIndex(member.id);
     setShowModal(true);
   };
 
@@ -174,59 +200,68 @@ function ManageMembers() {
     <>
       <AdminLayout active="ManageMembers">
         <section className="mm-content">
-          {/* ---------- TOOLBAR ---------- */}
           <div className="mm-toolbar">
-            <div className="left-tools">
-              {/* FILTER */}
-              <div ref={filterRef} className="filter-wrapper">
-                <button
-                  className="btn-outline"
-                  onClick={() => setShowFilter((p) => !p)}
-                >
-                  Filters <FiChevronDown />
-                </button>
+  <div className="left-tools">
+    {/* FILTER */}
+   <div ref={filterRef} className="filter-wrapper">
 
-                <div
-                  className={`filter-dropdown ${
-                    showFilter ? "open" : ""
-                  }`}
-                >
-                  <button onClick={() => setSortOrder("asc")}>
-                    A → Z
-                  </button>
-                  <button onClick={() => setSortOrder("desc")}>
-                    Z → A
-                  </button>
-                </div>
-              </div>
+     <button
+  className="btn-outline"
+  onClick={() => setShowFilter((p) => !p)}
+>
+  Filters <FiChevronDown />
+</button>
 
-              {/* ADD MEMBER */}
-              <button
-                className="btn-primary"
-                onClick={() => {
-                  resetForm();
-                  setShowModal(true);
-                }}
-              >
-                + Add Member
-              </button>
-            </div>
 
-            {/* SEARCH */}
-            <div className="mm-search-box">
-              <FiSearch />
-              <input
-                placeholder="Search..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-          </div>
+     <div className={`filter-dropdown ${showFilter ? "open" : ""}`}>
+  <button
+    onClick={() => {
+      setSortOrder("asc");
+      setShowFilter(false);
+    }}
+  >
+    A → Z
+  </button>
 
-          {/* ---------- MEMBERS GRID ---------- */}
+  <button
+    onClick={() => {
+      setSortOrder("desc");
+      setShowFilter(false);
+    }}
+  >
+    Z → A
+  </button>
+</div>
+
+    </div>
+
+    {/* ADD MEMBER */}
+    <button
+      className="btn-primary"
+      onClick={() => {
+        resetForm();
+        setShowModal(true);
+      }}
+    >
+      + Add Member
+    </button>
+  </div>
+
+  {/* SEARCH */}
+  <div className="mm-search-box">
+    <FiSearch />
+    <input
+      placeholder="Search..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+    />
+  </div>
+</div>
+
+
           <div className="mm-grid">
-            {filteredMembers.map((m, i) => (
-              <div className="mm-card" key={i}>
+            {filteredMembers.map((m) => (
+              <div className="mm-card" key={m.id}>
                 <span className="flat">Flat No: {m.flat}</span>
                 <h4>{m.name}</h4>
                 <p className="phone">
@@ -243,12 +278,12 @@ function ManageMembers() {
 
                   <FiEdit2
                     className="action-icon edit"
-                    onClick={() => openEdit(m, i)}
+                    onClick={() => openEdit(m)}
                   />
 
                   <FiTrash2
                     className="action-icon delete"
-                    onClick={() => handleDelete(i)}
+                    onClick={() => handleDelete(m.id)}
                   />
                 </div>
               </div>
@@ -257,8 +292,7 @@ function ManageMembers() {
         </section>
       </AdminLayout>
 
-      {/* ================= MODAL ================= */}
-      {showModal && (
+        {showModal && (
   <div className="modal-overlay">
     <div className="modal-card">
 
@@ -433,7 +467,6 @@ function ManageMembers() {
     </div>
   </div>
 )}
-
     </>
   );
 }

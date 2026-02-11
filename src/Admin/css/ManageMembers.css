@@ -162,19 +162,26 @@
   text-align: left;
 }
 
-
-/* ICON FIX */
-.mm-actions .action-icon {
-  font-size: 22px;
+/* ICONS */
+.action-icon {
+  cursor: pointer;
+  font-size: 18px;
+  opacity: 1;
+  transition: 0.2s;
 }
 
-.mm-actions .edit {
-  color: #2563eb;
+.action-icon.edit {
+  color: #4277eb;
 }
 
-.mm-actions .delete {
+.action-icon.delete {
   color: #dc2626;
 }
+
+.action-icon:hover {
+  transform: scale(1.1);
+}
+
 
 /* ================= MODAL (FIXED) ================= */
 /* ================= MODAL (FINAL FIX) ================= */

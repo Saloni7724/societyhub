@@ -24,7 +24,7 @@ function Login() {
 
 
       // redirect to manage members page
-      navigate("/ManageMembers");
+      navigate("/");
     } else {
       setError("Invalid username or password");
     }
