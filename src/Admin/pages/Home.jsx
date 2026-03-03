@@ -20,7 +20,7 @@ const Home = () => {
           <div className="card admin">
             <FaUserShield className="card-logo" />
             <h3>Login as Admin</h3>
-            <Link to="/Login">
+            <Link to="/login">
               <button className="btn admin-btn">Login as Admin</button>
             </Link>
           </div>
@@ -29,7 +29,7 @@ const Home = () => {
           <div className="card user">
             <FaUser className="card-logo" />
             <h3>Login as User</h3>
-            <Link to="/LoginUser">
+            <Link to="/login-User">
               <button className="btn user-btn">Login as User</button>
             </Link>
           </div>
@@ -38,7 +38,7 @@ const Home = () => {
           <div className="card residency">
             <FaHome className="card-logo" />
             <h3>Add Residency</h3>
-            <Link to="/AddSociety">
+            <Link to="/add-society">
               <button className="btn residency-btn">Add Residency</button>
             </Link>
           </div>

@@ -6,10 +6,10 @@ import { db } from "../Backend/firebase-init";
 import {
   collection,
   addDoc,
-  getDocs,
   query,
   orderBy,
   serverTimestamp,
+  onSnapshot,
 } from "firebase/firestore";
 
 const Visitors = () => {
@@ -25,32 +25,31 @@ const Visitors = () => {
     flat: "",
     purpose: "",
   });
+  const societyId = localStorage.getItem("societyId"); 
 
-  const websiteURL = "https://your-visitor-form.com";
+ const websiteURL = `http:// 192.168.0.111:3000/visitor-form?societyId=${societyId}`;
 
   /* FETCH VISITORS */
   useEffect(() => {
-    fetchVisitors();
-  }, []);
+  if (!societyId) return;
 
-  const fetchVisitors = async () => {
-    try {
-      const q = query(
-        collection(db, "visitors"),
-        orderBy("createdAt", "desc")
-      );
-      const snapshot = await getDocs(q);
+  const q = query(
+    collection(db, "societies", societyId, "visitors"),
+    orderBy("createdAt", "desc")
+  );
 
-      const data = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    const data = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    setVisitors(data);
+  });
 
-      setVisitors(data);
-    } catch (err) {
-      console.error("Error fetching visitors:", err);
-    }
-  };
+  return () => unsubscribe(); // cleanup listener
+}, [societyId]);
+
+  
 
   /* HANDLE INPUT */
   const handleChange = (e) => {
@@ -72,17 +71,20 @@ const Visitors = () => {
     }
 
     try {
-      await addDoc(collection(db, "visitors"), {
-        name: form.name,
-        phone: cleanPhone,
-        flat: form.flat,
-        purpose: form.purpose,
-        createdAt: serverTimestamp(),
-      });
+     await addDoc(
+  collection(db, "societies", societyId, "visitors"), // subcollection path
+  {
+    name: form.name,
+    phone: cleanPhone,
+    flat: form.flat,
+    purpose: form.purpose,
+    createdAt: serverTimestamp(),
+  }
+);
 
       setForm({ name: "", phone: "", flat: "", purpose: "" });
       setShowForm(false);
-      fetchVisitors();
+ 
     } catch (error) {
       console.error("Error adding visitor:", error);
     }
@@ -100,7 +102,7 @@ const Visitors = () => {
       <div className="visitors-page">
         {/* HEADER */}
         <div className="visitors-header">
-          <button className="add-btn" onClick={() => setShowForm(true)}>
+          <button className="add-visitor" onClick={() => setShowForm(true)}>
             + Add Visitors
           </button>
 
@@ -182,7 +184,7 @@ const Visitors = () => {
                 <option>Family</option>
               </select>
 
-              <button className="submit-btn" onClick={handleSubmit}>
+              <button className="submit-btn4" onClick={handleSubmit}>
                 Submit
               </button>
 
@@ -200,7 +202,7 @@ const Visitors = () => {
               <h3>Visitor QR Code</h3>
               <img src={qrImage} alt="QR" />
               <a href={qrImage} download="visitor-qr.png">
-                <button className="submit-btn">Download QR</button>
+                <button className="submit-btn4">Download QR</button>
               </a>
               <span className="close" onClick={() => setShowQR(false)}>
                 ✕

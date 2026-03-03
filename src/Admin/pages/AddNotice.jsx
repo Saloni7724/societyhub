@@ -15,14 +15,14 @@ import {
   orderBy,
   serverTimestamp,
 } from "firebase/firestore";
-
+const societyId = localStorage.getItem("societyId");
 const AddNotice = () => {
   const [showModal, setShowModal] = useState(false);
   const [notices, setNotices] = useState([]);
 
   const [showConfirm, setShowConfirm] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-
+const [errors, setErrors] = useState({});
   const [form, setForm] = useState({
     title: "",
     date: "",
@@ -31,58 +31,88 @@ const AddNotice = () => {
   });
 
   /* FETCH NOTICES */
-  useEffect(() => {
-    fetchNotices();
-  }, []);
+ useEffect(() => {
+  if (societyId) fetchNotices();
+}, [societyId]);
 
-  const fetchNotices = async () => {
-    try {
-      const q = query(collection(db, "notices"), orderBy("createdAt", "desc"));
-      const snapshot = await getDocs(q);
+ const fetchNotices = async () => {
+  if (!societyId) return;
 
-      const data = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+  try {
+    const q = query(
+      collection(db, "societies", societyId, "notices"),
+      orderBy("createdAt", "desc")
+    );
+    const snapshot = await getDocs(q);
 
-      setNotices(data);
-    } catch (err) {
-      console.error("Error fetching notices:", err);
-    }
-  };
+    const data = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
 
+    setNotices(data);
+  } catch (err) {
+    console.error("Error fetching notices:", err);
+  }
+};
   /* HANDLE INPUT */
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
+  const validateForm = () => {
+  let newErrors = {};
 
+  const todayDate = new Date();
+  todayDate.setHours(0, 0, 0, 0);
+
+  if (!form.title.trim()) {
+    newErrors.title = "Notice title is required";
+  }
+
+  if (!form.date) {
+    newErrors.date = "Date is required";
+  } else {
+    const selectedDate = new Date(form.date);
+
+    if (selectedDate < todayDate) {
+      newErrors.date = "Past dates are not allowed";
+    }
+  }
+
+  if (!form.message.trim()) {
+    newErrors.message = "Content is required";
+  }
+
+  setErrors(newErrors);
+
+  return Object.keys(newErrors).length === 0;
+};
   /* ADD NOTICE */
-  const handleAddNotice = async () => {
-    if (!form.title || !form.date || !form.message) {
-      alert("Please fill all fields");
-      return;
-    }
+ const handleAddNotice = async () => {
+  if (!validateForm()) return;
+  if (!societyId) return alert("Society not found");
 
-    try {
-      await addDoc(collection(db, "notices"), {
-        ...form,
-        createdAt: serverTimestamp(),
-      });
+  try {
+    await addDoc(collection(db, "societies", societyId, "notices"), {
+      ...form,
+      createdAt: serverTimestamp(),
+    });
 
-      setForm({
-        title: "",
-        date: "",
-        message: "",
-        priority: "high",
-      });
+    setForm({
+      title: "",
+      date: "",
+      message: "",
+      priority: "high",
+    });
 
-      setShowModal(false);
-      fetchNotices();
-    } catch (err) {
-      console.error("Error adding notice:", err);
-    }
-  };
-
+    setErrors({});
+    setShowModal(false);
+    fetchNotices();
+  } catch (err) {
+    console.error("Error adding notice:", err);
+    alert("Error saving notice");
+  }
+};
   /* DELETE CONFIRM */
   const confirmDelete = (id) => {
     setDeleteId(id);
@@ -91,14 +121,16 @@ const AddNotice = () => {
 
   /* DELETE NOTICE */
   const handleDelete = async () => {
-    try {
-      await deleteDoc(doc(db, "notices", deleteId));
-      setShowConfirm(false);
-      fetchNotices();
-    } catch (err) {
-      console.error("Error deleting notice:", err);
-    }
-  };
+  if (!societyId || !deleteId) return;
+  try {
+    await deleteDoc(doc(db, "societies", societyId, "notices", deleteId));
+    setShowConfirm(false);
+    fetchNotices();
+  } catch (err) {
+    console.error("Error deleting notice:", err);
+    alert("Error deleting notice");
+  }
+};
 
   return (
     <AdminLayout active="notice">
@@ -158,14 +190,16 @@ const AddNotice = () => {
               value={form.title}
               onChange={handleChange}
             />
+            {errors.title && <span className="error">{errors.title}</span>}
 
-            <label>Date</label>
-            <input
-              type="date"
-              name="date"
+              <input
+               type="date"
+               name="date"
+              min={new Date().toISOString().split("T")[0]}
               value={form.date}
               onChange={handleChange}
             />
+              {errors.date && <span className="error">{errors.date}</span>}
 
             <label>Content</label>
             <textarea
@@ -174,6 +208,7 @@ const AddNotice = () => {
               value={form.message}
               onChange={handleChange}
             ></textarea>
+            {errors.message && <span className="error">{errors.message}</span>}
 
             <label>Status</label>
             <select

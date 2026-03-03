@@ -12,39 +12,45 @@ import {
   updateDoc,
 } from "firebase/firestore";
 
+
+
+
+const societyId = localStorage.getItem("societyId"); 
 const Complaints = () => {
   const [complaints, setComplaints] = useState([]);
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All");
+const [search, setSearch] = useState("");
+const [statusFilter, setStatusFilter] = useState("All");
 
   /* FETCH COMPLAINTS */
   useEffect(() => {
     fetchComplaints();
   }, []);
 
-  const fetchComplaints = async () => {
-    try {
-      const q = query(
-        collection(db, "complaints"),
-        orderBy("createdAt", "desc")
-      );
-      const snapshot = await getDocs(q);
+ const fetchComplaints = async () => {
+  if (!societyId) return; // safety check
 
-      const data = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+  try {
+    const q = query(
+      collection(db, "societies", societyId, "complaints"), // subcollection path
+      orderBy("createdAt", "desc")
+    );
 
-      setComplaints(data);
-    } catch (err) {
-      console.error("Error fetching complaints:", err);
-    }
-  };
+    const snapshot = await getDocs(q);
+    const data = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    setComplaints(data);
+  } catch (err) {
+    console.error("Error fetching complaints:", err);
+  }
+};
 
   /* UPDATE STATUS */
   const handleStatusChange = async (id, newStatus) => {
     try {
-      const complaintRef = doc(db, "complaints", id);
+     const complaintRef = doc(db, "societies", societyId, "complaints", id);
       await updateDoc(complaintRef, {
         status: newStatus,
       });
@@ -61,18 +67,17 @@ const Complaints = () => {
   };
 
   /* FILTER LOGIC */
-  const filteredComplaints = complaints.filter((c) => {
-    const matchesSearch =
-      c.title?.toLowerCase().includes(search.toLowerCase()) ||
-      c.flat?.toLowerCase().includes(search.toLowerCase()) ||
-      c.category?.toLowerCase().includes(search.toLowerCase());
+ const filteredComplaints = complaints.filter(c => {
+  const matchesSearch =
+    c.title?.toLowerCase().includes(search.toLowerCase()) ||
+    c.flat?.toLowerCase().includes(search.toLowerCase()) ||
+    c.category?.toLowerCase().includes(search.toLowerCase());
 
-    const matchesStatus =
-      statusFilter === "All" || c.status === statusFilter;
+  const matchesStatus =
+    statusFilter === "All" || c.status === statusFilter;
 
-    return matchesSearch && matchesStatus;
-  });
-
+  return matchesSearch && matchesStatus;
+});
   /* STATS */
   const total = complaints.length;
   const pending = complaints.filter((c) => c.status === "Pending").length;

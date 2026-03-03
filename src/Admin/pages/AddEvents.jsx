@@ -17,6 +17,7 @@ const AddEvents = () => {
   const [showForm, setShowForm] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
+  const [errors, setErrors] = useState({});
 
   /* DELETE MODAL */
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -27,32 +28,38 @@ const AddEvents = () => {
 
   /* FORM DATA */
   const [formData, setFormData] = useState({
-    title: "",
-    date: "",
-    status: "Upcoming",
-    groups: ["All Members"],
-    groupInput: "",
-    amount: "100",
-  });
-
+  title: "",
+  date: "",
+  status: "Upcoming",
+  amount: "100",
+  targetType: "All",
+});
   /* SEARCH + FILTER */
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
 
   /* FETCH EVENTS */
+ const [societyId, setSocietyId] = useState(localStorage.getItem("societyId"));
+
+useEffect(() => {
+  if (!societyId) return; // safety check
   const fetchEvents = async () => {
-    const snapshot = await getDocs(collection(db, "events"));
-    const list = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const snapshot = await getDocs(collection(db, "societies", societyId, "events"));
+    const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     setEvents(list);
   };
+  fetchEvents();
+}, [societyId]);
+const fetchEvents = async () => {
+  if (!societyId) return; // safety check
 
-  useEffect(() => {
-    fetchEvents();
-  }, []);
-
+  const snapshot = await getDocs(collection(db, "societies", societyId, "events"));
+  const list = snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
+  setEvents(list);
+};
   /* ADD */
   const openAdd = () => {
     setIsEdit(false);
@@ -60,9 +67,8 @@ const AddEvents = () => {
       title: "",
       date: "",
       status: "Upcoming",
-      groups: ["All Members"],
-      groupInput: "",
       amount: "100",
+       targetType: "All", // ✅ ADD THIS
     });
     setShowForm(true);
   };
@@ -75,68 +81,93 @@ const AddEvents = () => {
     setShowForm(true);
   };
 
+  const validateForm = () => {
+  let newErrors = {};
+
+  if (!formData.title.trim()) {
+    newErrors.title = "Event title is required";
+  }
+
+  if (!formData.date) {
+    newErrors.date = "Event date is required";
+  } else {
+    const today = new Date().toISOString().split("T")[0];
+    if (formData.date < today) {
+      newErrors.date = "Past dates are not allowed";
+    }
+  }
+
+  if (!formData.amount || formData.amount <= 0) {
+    newErrors.amount = "Amount must be greater than 0";
+  }
+
+  setErrors(newErrors);
+
+  return Object.keys(newErrors).length === 0;
+};
   /* SAVE (ADD OR UPDATE) */
-  const handleSave = async () => {
-    if (!formData.title || !formData.date) {
-      alert("Please fill required fields");
+ const handleSave = async () => {
+  try {
+    if (!formData.title.trim() || !formData.date || formData.amount <= 0) {
+      alert("Please fill valid event details");
       return;
     }
 
-    try {
-      if (isEdit) {
-        const eventRef = doc(db, "events", editIndex);
-        await updateDoc(eventRef, {
-          title: formData.title,
-          date: formData.date,
-          status: formData.status,
-          groups: formData.groups,
-          amount: formData.amount,
-        });
-      } else {
-        await addDoc(collection(db, "events"), {
-          title: formData.title,
-          date: formData.date,
-          status: formData.status,
-          groups: formData.groups,
-          amount: formData.amount,
-        });
-      }
+    if (isEdit) {
+      // ✅ UPDATE EXISTING EVENT
+      const eventDocRef = doc(
+        db,
+        "societies",
+        societyId,
+        "events",
+        editIndex
+      );
 
-      fetchEvents();
-      setShowForm(false);
-    } catch (err) {
-      console.error(err);
-      alert("Error saving event");
+      await updateDoc(eventDocRef, {
+        title: formData.title,
+        date: formData.date,
+        status: formData.status,
+        amount: formData.amount,
+        targetType: formData.targetType,
+        updatedAt: new Date(),
+      });
+
+    } else {
+      // ✅ ADD NEW EVENT
+      await addDoc(
+        collection(db, "societies", societyId, "events"),
+        {
+          title: formData.title,
+          date: formData.date,
+          status: formData.status,
+          amount: formData.amount,
+          targetType: formData.targetType,
+          createdAt: new Date(),
+        }
+      );
     }
-  };
+
+    fetchEvents();
+    setShowForm(false);
+    setIsEdit(false);
+    setEditIndex(null);
+
+  } catch (err) {
+    console.error(err);
+    alert("Error saving event: " + err.message);
+  }
+};
+
 
   /* DELETE */
   const confirmDelete = async () => {
-    await deleteDoc(doc(db, "events", deleteIndex));
+   await deleteDoc(
+  doc(db, "societies", societyId, "events", deleteIndex)
+);
     fetchEvents();
     setShowDeleteModal(false);
   };
 
-  /* GROUP */
-  const addGroup = () => {
-    if (
-      formData.groupInput &&
-      !formData.groups.includes(formData.groupInput)
-    ) {
-      setFormData({
-        ...formData,
-        groups: [...formData.groups, formData.groupInput],
-        groupInput: "",
-      });
-    }
-  };
-
-  const removeGroup = (g) => {
-    setFormData({
-      ...formData,
-      groups: formData.groups.filter((x) => x !== g),
-    });
-  };
 
   /* FILTER */
   const filteredEvents = events.filter((e) => {
@@ -165,7 +196,7 @@ const AddEvents = () => {
                 <option value="Ongoing">Ongoing</option>
               </select>
 
-              <button className="add-btn" onClick={openAdd}>
+              <button className="add-event" onClick={openAdd}>
                 + Add Event
               </button>
             </div>
@@ -201,11 +232,7 @@ const AddEvents = () => {
 
                 <p className="date">📅 {event.date}</p>
 
-                <div className="groups">
-                  {event.groups.map((g, i) => (
-                    <span key={i}>{g}</span>
-                  ))}
-                </div>
+               
 
                 <div className="event-footer">
                   <button
@@ -238,7 +265,7 @@ const AddEvents = () => {
                 <FiX onClick={() => setShowForm(false)} />
               </div>
 
-              <div className="form-group">
+              <div className="form-group2">
                 <label>Event Title</label>
                 <input
                   value={formData.title}
@@ -249,23 +276,31 @@ const AddEvents = () => {
                     })
                   }
                 />
+                 {errors.title && <span className="error">{errors.title}</span>}
               </div>
+                    <div className="form-group2">
+  <label>Event Date</label>
+  <input
+    type="date"
+    min={new Date().toISOString().split("T")[0]}
+    value={formData.date}
+    onChange={(e) =>
+      setFormData({
+        ...formData,
+        date: e.target.value,
+      })
+    }
+  />
+  {errors.date && (
+    <span className="error">{errors.date}</span>
+  )}
+</div>
+      
+             {errors.date && <span className="error">{errors.date}</span>}
 
-              <div className="form-group">
-                <label>Event Date</label>
-                <input
-                  type="date"
-                  value={formData.date}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      date: e.target.value,
-                    })
-                  }
-                />
-              </div>
+            
 
-              <div className="form-group">
+              <div className="form-group2">
                 <label>Status</label>
                 <select
                   value={formData.status}
@@ -279,33 +314,30 @@ const AddEvents = () => {
                   <option>Upcoming</option>
                   <option>Ongoing</option>
                 </select>
+                
               </div>
+                    <div className="form-group2">
+  <label>Send Event To</label>
+  <select
+    value={formData.targetType}
+    onChange={(e) =>
+      setFormData({
+        ...formData,
+        targetType: e.target.value,
+      })
+    }
+  >
+    <option value="All">All Members</option>
+    <option value="Permanent">Permanent House</option>
+    <option value="Rent">Rent House</option>
+    <option value="Block-A">Block A</option>
+    <option value="Block-B">Block B</option>
+    <option value="Block-C">Block C</option>
+  </select>
+</div>
+              
 
-              <div className="form-group">
-                <label>Custom Group</label>
-                <div className="group-input">
-                  <input
-                    value={formData.groupInput}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        groupInput: e.target.value,
-                      })
-                    }
-                  />
-                  <button onClick={addGroup}>Add</button>
-                </div>
-              </div>
-
-              <div className="group-tags">
-                {formData.groups.map((g, i) => (
-                  <span key={i} onClick={() => removeGroup(g)}>
-                    {g} ✕
-                  </span>
-                ))}
-              </div>
-
-              <div className="form-group">
+              <div className="form-group2">
                 <label>Amount Per Person (₹)</label>
                 <input
                   type="number"
@@ -317,11 +349,12 @@ const AddEvents = () => {
                     })
                   }
                 />
+                  {errors.amount && <span className="error">{errors.amount}</span>}
               </div>
 
-              <button className="submit-btn" onClick={handleSave}>
-                {isEdit ? "Update Event" : "Add Event"}
-              </button>
+             <button className="submit-btn2" onClick={handleSave}>
+  {isEdit ? "Update Event" : "Add Event"}
+</button>
             </div>
           </div>
         )}

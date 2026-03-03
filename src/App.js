@@ -9,31 +9,103 @@ import Visitors from "./Admin/pages/Visitors";
 import Expenses from "./Admin/pages/Expenses";
 import Transactions from "./Admin/pages/Transactions";
 import Login from "./Admin/pages/Login";
-//import LoginUser from "./Admin/pages/LoginUser";
+import LoginUser from "./User/components/LoginUser";
 import AddSociety from "./Admin/pages/AddSociety";
-
-
-
-
+import VisitorForm from "./Admin/pages/VisitorForm";
+import ProtectedRoute from "./Admin/pages/ProtectedRoute";
 
 function App() {
   return (
     <Routes>
-      <Route path="/home" element={<Home />} />
-      <Route path="/" element={<ManageMembers />} />
-      <Route path="/add-events" element={<AddEvents />} />
-      <Route path="/add-notice" element={<AddNotice />} />
-      <Route path="/maintenance" element={<Maintenance />} />
-      <Route path="/complaints" element={<Complaints />} />
-      <Route path="/visitors" element={<Visitors />} />
-      <Route path="/expenses" element={<Expenses />} />
-      <Route path="/transactions" element={<Transactions />} />
-      <Route path="/Login" element={<Login />} />
- 
+      {/* ✅ Default route → Home page */}
+      <Route path="/" element={<Home />} />
 
-      <Route path="/AddSociety" element={<AddSociety />} />
-    
+      {/* ✅ Protected Admin Routes */}
+      <Route
+        path="/manage-members"
+        element={
+          <ProtectedRoute>
+            <ManageMembers />
+          </ProtectedRoute>
+        }
+      />
 
+      <Route
+        path="/add-events"
+        element={
+          <ProtectedRoute>
+            <AddEvents />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/add-notice"
+        element={
+          <ProtectedRoute>
+            <AddNotice />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/maintenance"
+        element={
+          <ProtectedRoute>
+            <Maintenance />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/complaints"
+        element={
+          <ProtectedRoute>
+            <Complaints />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/visitors"
+        element={
+          <ProtectedRoute>
+            <Visitors />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/expenses"
+        element={
+          <ProtectedRoute>
+            <Expenses />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/visitor-form"
+        element={
+          <ProtectedRoute>
+            <VisitorForm />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/transactions"
+        element={
+          <ProtectedRoute>
+            <Transactions />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ✅ Public Routes */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/login-user" element={<LoginUser />} />
+      <Route path="/add-society" element={<AddSociety />} />
     </Routes>
   );
 }

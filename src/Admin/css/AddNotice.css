@@ -164,7 +164,7 @@
 /* POST BUTTON */
 .post-btn {
   margin-top: 10px;
-  background: #6b7280;
+   background: #4caf6d;
   color: #fff;
   border: none;
   padding: 10px;
@@ -263,4 +263,10 @@
 
 .undo-toast button:hover {
   text-decoration: underline;
+}
+.error {
+  color: #dc2626;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
 }

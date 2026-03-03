@@ -1,0 +1,299 @@
+.expenses-container {
+  padding: 20px;
+}
+
+.expenses-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.expenses-header h2 {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.add-expense-btn {
+  background-color: #4f46e5;;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.add-expense-btn:hover {
+  opacity: 0.9;
+}
+
+.expenses-card {
+  background: #f5f2f1;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.filter-section {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 15px;
+}
+
+.filter-section select {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.expenses-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.expenses-table thead {
+  border-bottom: 2px solid #007bff;
+}
+
+.expenses-table th,
+.expenses-table td {
+  padding: 14px 10px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.expenses-table tbody tr {
+  border-bottom: 1px solid #ddd;
+}
+
+.status {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.paid {
+  background-color: #c6f6d5;
+  color: #2f855a;
+}
+
+.pending {
+  background-color: #fef3c7;
+  color: #b7791f;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.edit-icon {
+  color: #3b82f6;
+}
+
+.delete-icon {
+  color: #ef4444;
+}
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #f5f2f1;
+  width: 500px;
+  padding: 25px;
+  border-radius: 12px;
+  position: relative;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal input,
+.modal select {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.row > div {
+  flex: 1;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.cancel-btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+}
+
+.submit-btn5 {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  background: #4caf6d;;
+  color: white;
+  cursor: pointer;
+}
+
+.close-icon {
+  cursor: pointer;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #f5f2f1;
+  width: 500px;
+  padding: 25px;
+  border-radius: 12px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal input,
+.modal select {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.row > div {
+  flex: 1;
+}
+
+.custom-group-row {
+  display: flex;
+  gap: 10px;
+}
+
+.add-group-btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  background: #ccc;
+  cursor: pointer;
+}
+
+.chip-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  background: #e0e0e0;
+  padding: 6px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chip span {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.cancel-btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+}
+
+.submit-btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  background: #6fa8dc;
+  color: white;
+  cursor: pointer;
+}
+
+.close-icon {
+  cursor: pointer;
+}
+.modal.small {
+  width: 350px;
+}
+
+.delete-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}

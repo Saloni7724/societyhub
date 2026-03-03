@@ -1,6 +1,6 @@
 import "../css/ManageMembers.css";
 import AdminLayout from "../layout/AdminLayout";
-
+ import { query, orderBy } from "firebase/firestore";
 import { useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -8,7 +8,6 @@ import {
   FiSearch,
   FiX,
   FiChevronDown,
-  FiEdit2,
   FiTrash2,
   FiPhoneCall,
   FiMoreHorizontal,
@@ -31,7 +30,7 @@ function ManageMembers() {
   const navigate = useNavigate();
   const filterRef = useRef(null);
   
-
+const societyId = localStorage.getItem("societyId");
   const [members, setMembers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -41,6 +40,9 @@ function ManageMembers() {
   const [isEdit, setIsEdit] = useState(false);
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
+  const membersRef = societyId
+  ? collection(db, "societies", societyId, "members")
+  : null;
 
   const [formData, setFormData] = useState({
     name: "",
@@ -51,8 +53,15 @@ function ManageMembers() {
     password: "",
     profession: "",
     type: "",
+    residenceType: "",   // NEW
+    block: "",           // NEW
     showPassword: false,
   });
+
+  // Duplicate check
+
+
+  const [errors, setErrors] = useState({});
 useEffect(() => {
   const handleClickOutside = (event) => {
     if (
@@ -69,25 +78,37 @@ useEffect(() => {
 }, []);
 
   /* ------------------ AUTH CHECK ------------------ */
+  
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("isAdminLoggedIn");
-    if (!isLoggedIn) navigate("/");
+    if (!isLoggedIn) navigate("/manage-members");
   }, [navigate]);
-
+useEffect(() => {
+  if (societyId) {
+    fetchMembers();
+  }
+}, [societyId]);
   /* ------------------ FETCH MEMBERS ------------------ */
-  const fetchMembers = async () => {
-    const snapshot = await getDocs(collection(db, "members"));
+/* ------------------ FETCH MEMBERS ------------------ */
+const fetchMembers = async () => {
+  if (!societyId) return;
+
+  try {
+    const q = query(
+      collection(db, "societies", societyId, "members"),
+      orderBy("createdAt", "desc")
+    );
+
+    const snapshot = await getDocs(q);
     const list = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
     setMembers(list);
-  };
-
-  useEffect(() => {
-    fetchMembers();
-  }, []);
-
+  } catch (error) {
+    console.error("Error fetching members:", error);
+  }
+};
   /* ------------------ FILTER + SORT ------------------ */
   const filteredMembers = members
     .filter((m) =>
@@ -112,6 +133,8 @@ useEffect(() => {
       password: "",
       profession: "",
       type: "",
+      residenceType: "",   // NEW
+      block: "",           // NEW
       showPassword: false,
     });
     setIsEdit(false);
@@ -126,61 +149,145 @@ useEffect(() => {
   };
 
   /* ------------------ ADD / UPDATE ------------------ */
-  const handleSubmit = async () => {
-    if (
-      !formData.name ||
-      !formData.email ||
-      !formData.phone ||
-      !formData.flat ||
-      !formData.familyCount ||
-      !formData.profession ||
-      !formData.type
-    ) {
-      alert("Please fill all required fields");
-      return;
+  
+const handleSubmit = async () => {
+  if (!societyId) {
+    alert("Society ID not found. Cannot save member.");
+    return;
+  }
+
+  let newErrors = {};
+
+  /* ================= BASIC VALIDATION ================= */
+
+  if (!formData.name.trim())
+    newErrors.name = "Name is required";
+
+  if (!formData.email.trim()) {
+    newErrors.email = "Email is required";
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    newErrors.email = "Email is not in proper format";
+  }
+
+  if (!formData.phone || formData.phone.length !== 13)
+    newErrors.phone = "Phone number must be 10 digits";
+
+  if (!formData.flat.trim())
+    newErrors.flat = "Flat number is required";
+
+  if (!formData.familyCount || formData.familyCount <= 0)
+    newErrors.familyCount = "Enter valid number";
+
+  if (!formData.profession)
+    newErrors.profession = "Profession is required";
+
+  if (!formData.type.trim())
+    newErrors.type = "Type is required";
+
+  if (!formData.residenceType)
+    newErrors.residenceType = "Residence type is required";
+
+  if (!formData.block)
+    newErrors.block = "Block is required";
+
+  if (!isEdit && !formData.password.trim())
+    newErrors.password = "Password is required";
+
+
+  /* ================= DUPLICATE CHECK ================= */
+
+  const emailExists = members.some(
+    (m) =>
+      m.email?.toLowerCase() === formData.email.toLowerCase() &&
+      m.id !== editIndex
+  );
+
+  const phoneExists = members.some(
+    (m) =>
+      m.phone === formData.phone &&
+      m.id !== editIndex
+  );
+
+  if (emailExists)
+    newErrors.email = "Email already exists";
+
+  if (phoneExists)
+    newErrors.phone = "Phone number already exists";
+
+
+  /* ================= FINAL ERROR CHECK ================= */
+
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors);
+    return;
+  }
+
+  setErrors({});
+
+  /* ================= SAVE DATA ================= */
+
+  try {
+    if (isEdit) {
+      const memberRef = doc(
+        db,
+        "societies",
+        societyId,
+        "members",
+        editIndex
+      );
+
+      await updateDoc(memberRef, {
+        name: formData.name,
+        email: formData.email.toLowerCase(),
+        phone: formData.phone,
+        flat: formData.flat,
+        familyCount: formData.familyCount,
+        profession: formData.profession,
+        type: formData.type,
+        residenceType: formData.residenceType,
+        block: formData.block,
+        updatedAt: serverTimestamp(),
+      });
+
+    } else {
+      const membersRef = collection(
+        db,
+        "societies",
+        societyId,
+        "members"
+      );
+
+      await addDoc(membersRef, {
+        name: formData.name,
+        email: formData.email.toLowerCase(),
+        phone: formData.phone,
+        flat: formData.flat,
+        familyCount: formData.familyCount,
+        profession: formData.profession,
+        type: formData.type,
+        residenceType: formData.residenceType,
+        block: formData.block,
+        password: formData.password,
+        createdAt: serverTimestamp(),
+      });
     }
 
-    try {
-      if (isEdit) {
-        const memberRef = doc(db, "members", editIndex);
-        await updateDoc(memberRef, {
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          flat: formData.flat,
-          familyCount: formData.familyCount,
-          profession: formData.profession,
-          type: formData.type,
-        });
-      } else {
-        await addDoc(collection(db, "members"), {
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          flat: formData.flat,
-          familyCount: formData.familyCount,
-          profession: formData.profession,
-          type: formData.type,
-          createdAt: serverTimestamp(),
-        });
-      }
+    await fetchMembers();
+    setShowModal(false);
+    resetForm();
 
-      await fetchMembers();
-      setShowModal(false);
-      resetForm();
-    } catch (error) {
-      console.error(error);
-      alert("Error saving member");
-    }
-  };
-
+  } catch (error) {
+    console.error("Error saving member:", error);
+    alert("Error saving member. Check console for details.");
+  }
+};
   /* ------------------ DELETE ------------------ */
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this member?")) return;
-    await deleteDoc(doc(db, "members", id));
-    fetchMembers();
-  };
+ const handleDelete = async (id) => {
+  if (!window.confirm("Delete this member?")) return;
 
+  await deleteDoc(doc(db, "societies", societyId, "members", id));
+  fetchMembers(); // refresh after delete
+};
   const openEdit = (member) => {
     setFormData({ ...member, showPassword: false });
     setIsEdit(true);
@@ -198,7 +305,7 @@ useEffect(() => {
   /* ====================== UI ====================== */
   return (
     <>
-      <AdminLayout active="ManageMembers">
+      <AdminLayout active="members">
         <section className="mm-content">
           <div className="mm-toolbar">
   <div className="left-tools">
@@ -276,10 +383,9 @@ useEffect(() => {
                     <FiMoreHorizontal /> Read More
                   </button>
 
-                  <FiEdit2
-                    className="action-icon edit"
-                    onClick={() => openEdit(m)}
-                  />
+        <span className="edit-btn" onClick={() => openEdit(m)}>
+  ✏️
+</span>
 
                   <FiTrash2
                     className="action-icon delete"
@@ -294,7 +400,7 @@ useEffect(() => {
 
         {showModal && (
   <div className="modal-overlay">
-    <div className="modal-card">
+    <div className="modal-card1">
 
       {/* HEADER */}
       <div className="modal-header">
@@ -322,7 +428,7 @@ useEffect(() => {
 
         {/* NAME + EMAIL */}
         <div className="form-row">
-          <div className="form-group">
+          <div className="form-group1">
             <label>Name *</label>
             <input
               name="name"
@@ -330,9 +436,11 @@ useEffect(() => {
               onChange={handleChange}
               disabled={isReadOnly}
             />
+       
+{errors.name && <span className="error">{errors.name}</span>}
           </div>
 
-          <div className="form-group">
+          <div className="form-group1">
             <label>Email *</label>
             <input
               name="email"
@@ -340,29 +448,39 @@ useEffect(() => {
               onChange={handleChange}
               disabled={isReadOnly}
             />
+            {errors.email && <span className="error">{errors.email}</span>}
           </div>
         </div>
 
         {/* PHONE */}
-        <div className="form-group">
+        <div className="form-group1">
           <label>Phone *</label>
           <input
             name="phone"
             value={formData.phone}
             disabled={isReadOnly}
             onChange={(e) => {
-              let val = e.target.value;
-              if (!val.startsWith("+91")) val = "+91";
-              val = "+91" + val.slice(3).replace(/\D/g, "");
-              if (val.length > 13) val = val.slice(0, 13);
-              setFormData({ ...formData, phone: val });
-            }}
+  let val = e.target.value.replace(/\D/g, "");
+
+  // Remove 91 if user types manually
+  if (val.startsWith("91")) {
+    val = val.slice(2);
+  }
+
+  if (val.length > 10) {
+    val = val.slice(0, 10);
+  }
+
+  setFormData({ ...formData, phone: "+91" + val });
+}}
           />
+          {errors.phone && <span className="error">{errors.phone}</span>}
         </div>
 
         {/* FLAT + FAMILY */}
-       <div className="form-row">
-  <div className="form-group">
+       {/* FLAT + FAMILY */}
+<div className="form-row">
+  <div className="form-group1">
     <label>Flat No *</label>
     <input
       name="flat"
@@ -370,25 +488,32 @@ useEffect(() => {
       onChange={handleChange}
       disabled={isReadOnly}
     />
+    {errors.flat && <span className="error">{errors.flat}</span>}
   </div>
 
-  <div className="form-group">
-    <label>Family Members *</label>
+  <div className="form-group1">
+    <label>Family Count *</label>
     <input
       type="number"
       name="familyCount"
       value={formData.familyCount}
-      onChange={handleChange}
+      onChange={(e) => {
+        if (e.target.value >= 0) {
+          handleChange(e);
+        }
+      }}
       disabled={isReadOnly}
     />
+    {errors.familyCount && (
+      <span className="error">{errors.familyCount}</span>
+    )}
   </div>
 </div>
 
 
-
         {/* PASSWORD */}
         {!isReadOnly && (
-          <div className="form-group">
+          <div className="form-group1">
             <label>Password *</label>
             <div className="password-wrapper">
               <input
@@ -397,6 +522,7 @@ useEffect(() => {
                 value={formData.password}
                 onChange={handleChange}
               />
+              {errors.password && <span className="error">{errors.password}</span>}
               <span
                 className="password-toggle"
                 onClick={() =>
@@ -413,53 +539,88 @@ useEffect(() => {
         )}
 
         {/* PROFESSION */}
-        <div className="form-group">
-          <label>Profession *</label>
-          <div className="radio-group">
-            <label>
-              <input
-                type="radio"
-                name="profession"
-                value="Job"
-                checked={formData.profession === "Job"}
-                onChange={handleChange}
-                disabled={isReadOnly}
-              />
-              Job
-            </label>
+            <div className="form-group1">
+              <label>Profession <span className="required">*</span></label>
+              <div className="radio-group">
+                <label>
+                  <input
+                    type="radio"
+                    name="profession"
+                    value="Job"
+                    checked={formData.profession === "Job"}
+                    onChange={handleChange}
+                    disabled={isReadOnly}
+                  /> Job
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="profession"
+                    value="Business"
+                    checked={formData.profession === "Business"}
+                    onChange={handleChange}
+                    disabled={isReadOnly}
+                  /> Business
+                </label>
+                {errors.profession && <span className="error">{errors.profession}</span>}
+              </div>
+            </div>
 
-            <label>
-              <input
-                type="radio"
-                name="profession"
-                value="Business"
-                checked={formData.profession === "Business"}
-                onChange={handleChange}
-                disabled={isReadOnly}
-              />
-              Business
-            </label>
-          </div>
-        </div>
+            {formData.profession && (
+              <div className="form-group1">
+                <label>Type of {formData.profession} <span className="required">*</span></label>
+                <input
+                  name="type"
+                  value={formData.type}
+                  onChange={handleChange}
+                  disabled={isReadOnly}
+                />
+                {errors.type && <span className="error">{errors.type}</span>}
+              </div>
+            )}
+</div>
+< div className="form-row">
+<div className="form-group1">
+  <label>Residence Type *</label>
+  <select
+    name="residenceType"
+    value={formData.residenceType}
+    onChange={handleChange}
+    disabled={isReadOnly}
+  >
+    <option value="">Select</option>
+    <option value="Permanent">Permanent</option>
+    <option value="Rent">Rent</option>
+  </select>
+  {errors.residenceType && (
+    <span className="error">{errors.residenceType}</span>
+  )}
+</div>
 
-        {/* TYPE */}
-        {formData.profession && (
-          <div className="form-group">
-            <label>Type *</label>
-            <input
-              name="type"
-              value={formData.type}
-              onChange={handleChange}
-              disabled={isReadOnly}
-            />
-          </div>
-        )}
-      </div>
+
+<div className="form-group1">
+  <label>Block *</label>
+  <select
+    name="block"
+    value={formData.block}
+    onChange={handleChange}
+    disabled={isReadOnly}
+  >
+    <option value="">Select Block</option>
+    <option value="A">A Block</option>
+    <option value="B">B Block</option>
+    <option value="C">C Block</option>
+  </select>
+  {errors.block && (
+    <span className="error">{errors.block}</span>
+  )}
+</div>
+</div>
 
       {/* FOOTER */}
       {!isReadOnly && (
         <div className="modal-footer">
-          <button className="submit-btn" onClick={handleSubmit}>
+          <button className="submit-btn1" onClick={handleSubmit}>
             {isEdit ? "Update Member" : "Add Member"}
           </button>
         </div>

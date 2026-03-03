@@ -1,0 +1,122 @@
+.pending-container {
+  padding: 20px;
+  background: #f4f7ff;
+  min-height: 100vh;
+}
+
+/* Title */
+.pending-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 25px;
+  color: #1e293b;
+}
+
+/* Grid Layout */
+.pending-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+/* Card Base */
+.pending-card {
+  padding: 18px;
+  border-radius: 16px;
+  width: 320px;
+  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.10);
+  transition: 0.3s ease;
+  border-left: 6px solid transparent;
+}
+
+/* Hover */
+.pending-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 10px 22px rgba(0, 0, 0, 0.15);
+}
+
+/* ✅ Colorful Professional Cards */
+.pending-card:nth-child(1) {
+  background: #f0f9ff; /* Soft Sky Blue */
+  border-left-color: #0284c7;
+}
+
+.pending-card:nth-child(2) {
+  background: #fdf4ff; /* Soft Lavender Pink */
+  border-left-color: #a855f7;
+}
+
+.pending-card:nth-child(3) {
+  background: #f0fdf4; /* Soft Mint Green */
+  border-left-color: #22c55e;
+}
+
+.pending-card:nth-child(4) {
+  background: #fff7ed; /* Soft Peach Orange */
+  border-left-color: #f97316;
+}
+
+/* Text */
+.pending-card p {
+  font-size: 14px;
+  margin: 8px 0;
+  color: #334155;
+}
+
+.pending-card span {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Pending Type Badge */
+.pending-type {
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+/* Amount */
+.amount {
+  font-size: 15px;
+  font-weight: bold;
+  color: #dc2626;
+}
+
+/* Pay Button */
+.pay-btn {
+  margin-top: 14px;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  color: white;
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  transition: 0.3s ease;
+}
+
+.pay-btn:hover {
+  transform: scale(1.03);
+  background: linear-gradient(90deg, #1e40af, #2563eb);
+}
+
+/* Paid Button */
+.pay-btn:disabled {
+  background: #22c55e;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pending-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pending-card {
+    width: 100%;
+  }
+}

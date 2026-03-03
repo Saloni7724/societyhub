@@ -1,0 +1,57 @@
+.visitor-form-page {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f4f6f9;
+}
+
+.visitor-card {
+  width: 350px;
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.visitor-card h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.visitor-card label {
+  display: block;
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.visitor-card input,
+.visitor-card select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+.visitor-card input:focus,
+.visitor-card select:focus {
+  border-color: #4caf50;
+}
+
+.visitor-card button {
+  width: 100%;
+  margin-top: 20px;
+  padding: 10px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.visitor-card button:hover {
+  background: #43a047;
+}
