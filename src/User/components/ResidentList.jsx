@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./css/ResidentList.css";
 
 const ResidentList = () => {
-  const residents = [
+  const residentsData = [
     {
       name: "Mansi Patel",
       email: "MansiPatel1708@gmail.com",
@@ -36,100 +36,65 @@ const ResidentList = () => {
       type: "Education",
     },
     {
-      name: "Kavya Patel",
-      email: "KavyaPatel9220@gmail.com",
-      flat: "A-105",
-      contact: "9654231576",
+      name: "Ravi Shah",
+      email: "ravishah@gmail.com",
+      flat: "B-201",
+      contact: "9876543210",
       profession: "Business",
       type: "Marketing",
     },
-    {
-      name: "Dhruvi Patel",
-      email: "DhruviPatel7654@gmail.com",
-      flat: "A-106",
-      contact: "9178151108",
-      profession: "Job",
-      type: "Developer",
-    },
   ];
 
-  /* ---------------- STATES ---------------- */
+  const [search, setSearch] = useState("");
+  const [flatFilter, setFlatFilter] = useState("All");
+  const [professionFilter, setProfessionFilter] = useState("All");
 
-  // Pagination
+  /* Pagination */
   const [currentPage, setCurrentPage] = useState(1);
   const residentsPerPage = 4;
 
-  // Search Resident Name
-  const [searchName, setSearchName] = useState("");
+  /* Unique Flats */
+  const flats = ["All", ...new Set(residentsData.map((r) => r.flat))];
 
-  // Flat Filter
-  const [selectedFlat, setSelectedFlat] = useState("All");
-
-  // Profession Filter
-  const [selectedProfession, setSelectedProfession] = useState("All");
-
-  /* ---------------- DROPDOWN OPTIONS ---------------- */
-
-  const flats = ["All", ...new Set(residents.map((r) => r.flat))];
-
+  /* Unique Professions */
   const professions = [
     "All",
-    ...new Set(residents.map((r) => r.profession)),
+    ...new Set(residentsData.map((r) => r.profession)),
   ];
 
-  /* ---------------- FILTER LOGIC ---------------- */
-
-  const filteredResidents = residents.filter((r) => {
-    const matchName = r.name
-      .toLowerCase()
-      .includes(searchName.toLowerCase());
-
-    const matchFlat =
-      selectedFlat === "All" ? true : r.flat === selectedFlat;
-
-    const matchProfession =
-      selectedProfession === "All"
-        ? true
-        : r.profession === selectedProfession;
-
-    return matchName && matchFlat && matchProfession;
+  /* Filter Logic */
+  const filteredResidents = residentsData.filter((r) => {
+    return (
+      r.name.toLowerCase().includes(search.toLowerCase()) &&
+      (flatFilter === "All" || r.flat === flatFilter) &&
+      (professionFilter === "All" || r.profession === professionFilter)
+    );
   });
 
-  /* ---------------- PAGINATION LOGIC ---------------- */
-
+  /* Pagination Logic */
   const indexOfLast = currentPage * residentsPerPage;
   const indexOfFirst = indexOfLast - residentsPerPage;
+  const currentResidents = filteredResidents.slice(indexOfFirst, indexOfLast);
 
-  const currentResidents = filteredResidents.slice(
-    indexOfFirst,
-    indexOfLast
-  );
+  const totalPages = Math.ceil(filteredResidents.length / residentsPerPage);
 
   return (
     <div className="resident-container">
       {/* Title */}
       <h2 className="resident-title">Resident List</h2>
 
-      {/* ✅ Filters Section */}
-      <div className="filters">
-        {/* Search */}
+      {/* Search + Filters */}
+      <div className="resident-filters">
         <input
           type="text"
           placeholder="Search Resident Name..."
-          value={searchName}
-          onChange={(e) => {
-            setSearchName(e.target.value);
-            setCurrentPage(1);
-          }}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
 
-        {/* Flat Filter */}
         <select
-          value={selectedFlat}
-          onChange={(e) => {
-            setSelectedFlat(e.target.value);
-            setCurrentPage(1);
-          }}
+          value={flatFilter}
+          onChange={(e) => setFlatFilter(e.target.value)}
         >
           {flats.map((flat, index) => (
             <option key={index} value={flat}>
@@ -138,13 +103,9 @@ const ResidentList = () => {
           ))}
         </select>
 
-        {/* Profession Filter */}
         <select
-          value={selectedProfession}
-          onChange={(e) => {
-            setSelectedProfession(e.target.value);
-            setCurrentPage(1);
-          }}
+          value={professionFilter}
+          onChange={(e) => setProfessionFilter(e.target.value)}
         >
           {professions.map((pro, index) => (
             <option key={index} value={pro}>
@@ -155,55 +116,63 @@ const ResidentList = () => {
       </div>
 
       {/* Table */}
-      <table className="resident-table">
-        <thead>
-          <tr>
-            <th>Resident Name</th>
-            <th>Email</th>
-            <th>Flat No.</th>
-            <th>Contact</th>
-            <th>Profession</th>
-            <th>Type</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {currentResidents.length > 0 ? (
-            currentResidents.map((res, index) => (
-              <tr key={index}>
-                <td>{res.name}</td>
-                <td>{res.email}</td>
-                <td>{res.flat}</td>
-                <td>{res.contact}</td>
-                <td>{res.profession}</td>
-                <td>{res.type}</td>
-              </tr>
-            ))
-          ) : (
+      <div className="resident-table-box">
+        <table className="resident-table">
+          <thead>
             <tr>
-              <td colSpan="6" style={{ textAlign: "center" }}>
-                No Residents Found ❌
-              </td>
+              <th>Resident Name</th>
+              <th>Email</th>
+              <th>Flat No.</th>
+              <th>Contact</th>
+              <th>Profession</th>
+              <th>Type</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {currentResidents.length > 0 ? (
+              currentResidents.map((r, index) => (
+                <tr key={index}>
+                  <td>{r.name}</td>
+                  <td>{r.email}</td>
+                  <td>{r.flat}</td>
+                  <td>{r.contact}</td>
+
+                  <td>
+                    <span className="profession-badge">{r.profession}</span>
+                  </td>
+
+                  <td>
+                    <span className="type-badge">{r.type}</span>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6" style={{ padding: "20px", color: "red" }}>
+                  No Residents Found!
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {/* Pagination */}
       <div className="pagination">
         <button
-          className="page-btn"
+          className="prev-btn"
           disabled={currentPage === 1}
           onClick={() => setCurrentPage(currentPage - 1)}
         >
           Previous
         </button>
 
-        <button className="page-number active">{currentPage}</button>
+        <div className="page-number">{currentPage}</div>
 
         <button
-          className="page-btn"
-          disabled={indexOfLast >= filteredResidents.length}
+          className="next-btn"
+          disabled={currentPage === totalPages}
           onClick={() => setCurrentPage(currentPage + 1)}
         >
           Next

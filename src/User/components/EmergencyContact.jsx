@@ -86,7 +86,7 @@ const EmergencyContact = () => {
             </p>
 
             {/* ✅ Buttons */}
-            <div className="btn-row">
+            <div className="emegency-btn">
               <a href={`tel:${item.phone}`} className="call-btn">
                 📞 Call
               </a>

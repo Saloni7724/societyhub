@@ -20,13 +20,13 @@ const Events = () => {
   const events = [
     {
       id: 1,
-      name: "Republic Day Celebration 🇮🇳",
+      name: "Republic Day Celebration",
       date: "26 Jan 2026",
       amountPerPerson: 300,
     },
     {
       id: 2,
-      name: "Holi Celebration 🎨",
+      name: "Holi Celebration",
       date: "04 Mar 2026",
       amountPerPerson: 200,
     },
@@ -53,7 +53,7 @@ const Events = () => {
     doc.text("Society Event Payment Receipt", 20, 20);
 
     doc.setFontSize(12);
-    doc.text("Payment Successful ✅", 20, 35);
+    doc.text("Payment Successful ", 20, 35);
 
     /* ✅ Receipt Table with Member Details */
     autoTable(doc, {
@@ -67,10 +67,10 @@ const Events = () => {
         ["Event Date", selectedEvent.date],
 
         ["Joining Persons", joinCount],
-        ["Amount Per Person", `₹ ${selectedEvent.amountPerPerson}`],
+        ["Amount Per Person", `Rs.${selectedEvent.amountPerPerson}`],
 
-        ["Total Paid Amount", `₹ ${totalAmount}`],
-        ["Payment Status", "PAID ✅"],
+        ["Total Paid Amount", `Rs.${totalAmount}`],
+        ["Payment Status", "PAID "],
       ],
     });
 
@@ -80,7 +80,7 @@ const Events = () => {
       doc.lastAutoTable.finalY + 20
     );
 
-    doc.save("Event_Receipt.pdf");
+    doc.save("Event_Receipt.pdf");  
   };
 
   return (
@@ -124,16 +124,14 @@ const Events = () => {
         <div className="details-overlay">
           <div className="details-page">
             {/* Header */}
-            <div className="details-header">
-              <h2>Event Payment Details</h2>
+            <h2 className="details-title">Event Payment Details</h2>
 
-              <button
-                className="close-btn"
-                onClick={() => setSelectedEvent(null)}
-              >
-                ✖
-              </button>
-            </div>
+             <button
+             className="close-btn"
+             onClick={() => setSelectedEvent(null)}
+             >
+             ✖
+            </button>
 
             {/* Form */}
             <div className="details-form">
@@ -166,11 +164,11 @@ const Events = () => {
 
               {/* Total Amount */}
               <label>Total Amount</label>
-              <input type="text" value={`₹ ${totalAmount}`} disabled />
+              <input type="text" value={`Rs. ${totalAmount}`} disabled />
 
               {/* Pay Button */}
               <button className="pay-btn" onClick={handlePayment}>
-                Pay Now ₹ {totalAmount}
+                Pay Now Rs {totalAmount}
               </button>
             </div>
           </div>
@@ -190,7 +188,7 @@ const Events = () => {
             </p>
 
             <p>
-              Paid Amount: <b>₹ {totalAmount}</b>
+              Paid Amount: <b>Rs {totalAmount}</b>
             </p>
 
             {/* Receipt Download */}

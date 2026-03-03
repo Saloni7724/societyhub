@@ -8,7 +8,7 @@ import Profile from "./User/components/Profile";
 import Complaint from "./User/components/Complaint";
 import Notification from "./User/components/Notification";  
 import ResidentList from "./User/components/ResidentList";  
-import Dashboard from "./User/components/Dashboard";
+import Dashboard from "./User/components/Dashboard1";
 import PendingAmount from "./User/components/PendingAmount";
 import PaymentMaintenance from "./User/components/PaymentMaintenance";
 import NotificationPopup from "./User/components/NotificationPopup";    

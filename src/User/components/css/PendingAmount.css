@@ -1,112 +1,130 @@
+/* 🌤 Page Background */
 .pending-container {
-  padding: 20px;
-  background: #f4f7ff;
   min-height: 100vh;
+  padding: 30px;   /* reduced from 50px */
+  background: #e9edf3;
+  font-family: "Poppins", sans-serif;
 }
 
 /* Title */
 .pending-title {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 25px;
-  color: #1e293b;
+  font-size: 24px;   /* slightly smaller */
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 25px;  /* reduced */
 }
 
 /* Grid Layout */
 .pending-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  gap: 25px;   /* reduced from 40px */
 }
 
 /* Card Base */
 .pending-card {
-  padding: 18px;
-  border-radius: 16px;
-  width: 320px;
-  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.10);
+  padding: 20px;   /* reduced from 30px */
+  border-radius: 17px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+  position: relative;
+  background: #ffffff;
   transition: 0.3s ease;
-  border-left: 6px solid transparent;
 }
 
-/* Hover */
 .pending-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0px 10px 22px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
 }
 
-/* ✅ Colorful Professional Cards */
+/* Left Color Border */
+.pending-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 6px;
+  height: 100%;
+  border-radius: 18px 0 0 18px;
+}
+
+/* Individual Card Colors */
 .pending-card:nth-child(1) {
-  background: #f0f9ff; /* Soft Sky Blue */
-  border-left-color: #0284c7;
+  background: #dbeafe;
+}
+.pending-card:nth-child(1)::before {
+  background: #3b82f6;
 }
 
 .pending-card:nth-child(2) {
-  background: #fdf4ff; /* Soft Lavender Pink */
-  border-left-color: #a855f7;
+  background: #f3e8ff;
+}
+.pending-card:nth-child(2)::before {
+  background: #8b5cf6;
 }
 
 .pending-card:nth-child(3) {
-  background: #f0fdf4; /* Soft Mint Green */
-  border-left-color: #22c55e;
+  background: #dcfce7;
+}
+.pending-card:nth-child(3)::before {
+  background: #22c55e;
 }
 
 .pending-card:nth-child(4) {
-  background: #fff7ed; /* Soft Peach Orange */
-  border-left-color: #f97316;
+  background: #fae3e3;
+}
+.pending-card:nth-child(4)::before {
+  background: #c25a5a;
 }
 
 /* Text */
 .pending-card p {
-  font-size: 14px;
-  margin: 8px 0;
-  color: #334155;
+  margin: 6px 0;
+  font-size: 14px;   /* slightly smaller */
+  color: #374151;
 }
 
 .pending-card span {
   font-weight: 600;
-  color: #0f172a;
+  color: #111827;
 }
 
-/* Pending Type Badge */
+/* Badge */
 .pending-type {
+  display: inline-block;
   padding: 4px 10px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: bold;
-  background: rgba(0, 0, 0, 0.06);
+  background: #e5e7eb;
+  border-radius: 20px;
+  font-size: 12px;
+  margin-left: 5px;
 }
 
 /* Amount */
 .amount {
-  font-size: 15px;
-  font-weight: bold;
-  color: #dc2626;
+  font-size: 16px;
+  font-weight: 700;
+  color: #2563eb;
 }
 
-/* Pay Button */
+/* Button */
 .pay-btn {
-  margin-top: 14px;
+  margin-top: 15px;  /* reduced */
   width: 100%;
   padding: 10px;
   border: none;
   border-radius: 12px;
   font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
+  font-weight: 600;
   color: white;
-  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  cursor: pointer;
+  background: linear-gradient(to right, #2563eb, #3b82f6);
   transition: 0.3s ease;
 }
 
 .pay-btn:hover {
-  transform: scale(1.03);
-  background: linear-gradient(90deg, #1e40af, #2563eb);
+  opacity: 0.9;
 }
 
-/* Paid Button */
 .pay-btn:disabled {
-  background: #22c55e;
+  background: #9ca3af;
   cursor: not-allowed;
 }
 
@@ -114,9 +132,5 @@
 @media (max-width: 768px) {
   .pending-grid {
     grid-template-columns: 1fr;
-  }
-
-  .pending-card {
-    width: 100%;
   }
 }

@@ -57,7 +57,6 @@ const Profile = () => {
                 <span>📞 Contact</span>
                 <p>{user.contact}</p>
               </div>
-
               <div className="info-box">
                 <span>💼 Profession</span>
                 <p>{user.profession}</p>

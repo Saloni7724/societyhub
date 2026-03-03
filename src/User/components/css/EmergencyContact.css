@@ -59,7 +59,7 @@
 }
 
 /* Buttons */
-.btn-row {
+.emegency-btn {
   display: flex;
   gap: 10px;
   margin-top: 15px;
@@ -215,4 +215,9 @@
 
 .whatsapp-btn:hover {
   background: #b4eac3;
+}
+.emergency-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }

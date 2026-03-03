@@ -448,3 +448,32 @@
   background: #22c55e;
   color: white;
 }
+.event-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+.details-page {
+  position: relative;   /* 🔥 Very Important */
+  background: #fff;
+  padding: 30px;
+  border-radius: 20px;
+  width: 400px;
+}
+
+/* Close Button */
+.close-btn {
+  position: absolute;   /* 🔥 Remove from form flow */
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: red;
+  cursor: pointer;
+}
+
+.details-title {
+  margin-bottom: 20px;
+}

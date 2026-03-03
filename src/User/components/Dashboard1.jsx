@@ -30,7 +30,7 @@ import Notifications from "./Notification";
 import Complaint from "./Complaint";
 
 const Dashboard = () => {
-  const [activePage, setActivePage] = useState("dashboard");
+   const [activePage, setActivePage] = useState("profile");
 
   /* ✅ Logout Function */
   const handleLogout = () => {
@@ -52,14 +52,7 @@ const Dashboard = () => {
         {/* Menu */}
         <ul className="menu">
           
-          {/* Dashboard */}
-          <li
-            className={activePage === "dashboard" ? "active" : ""}
-            onClick={() => setActivePage("dashboard")}
-          >
-            <FaUserCircle />
-            <span>Dashboard</span>
-          </li>
+        
 
           {/* My Profile */}
           <li
