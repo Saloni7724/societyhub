@@ -6,30 +6,35 @@
 }
 
 /* ================= SIDEBAR ================= */
-.admin-sidebar {
-  width: 260px;
-  background: #111827;
-  color: #ffffff;
-  padding: 25px 20px;
+
+
+.admin-sidebar nav {
+  flex: 1;
+}
+
+.avatar {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 25px;
 }
 
-.admin-sidebar .avatar {
-  width: 70px;
-  height: 70px;
+.avatar img {
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  overflow: hidden;
-  margin: 0 auto 20px;
-  border: 2px solid #4f46e5;
+  box-shadow: 0 0 0 1.5px rgba(99, 102, 241, 0.4);
 }
-
-.admin-sidebar .avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.sidebar-profile img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.4);
 }
-
+.sidebar-profile {
+  padding: 18px 0;
+  display: flex;
+  justify-content: center;
+}
 /* NAV */
 .admin-sidebar .menu-item {
   display: flex;
@@ -44,15 +49,21 @@
   border-radius: 10px;
   transition: all 0.25s ease;
 }
+.menu-item svg {
+  font-size: 20px;
+}
 
+.menu-item span {
+  font-weight: 500;
+}
 .admin-sidebar .menu-item:hover {
   background: #1f2937;
   color: #ffffff;
 }
 
 .admin-sidebar .menu-item.active {
-  background: #4f46e5;
-  color: #ffffff;
+  background: rgba(99, 102, 241, 0.18);
+  color: #818cf8;
 }
 
 /* ================= MAIN ================= */
@@ -141,3 +152,53 @@ html, body {
   margin: 0;
   padding: 0;
 }
+.admin-sidebar .menu-item.logout-btn {
+  margin-top: auto;
+  border-top: 1px solid #1f2937;
+  color: #ef4444;   /* red */
+}
+.admin-sidebar .menu-item.logout-btn:hover {
+  background: #1f2937;
+  color: #ffffff;
+}
+
+/* Sidebar animation */
+.admin-sidebar {
+  width: 240px;
+  background: #0f172a;
+  color: #ffffff;
+  padding: 25px 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  transition: all 0.3s ease;
+}
+.admin-sidebar.closed {
+  width: 90px;
+}
+
+/* Hide text when closed */
+.admin-sidebar.closed .menu-item span {
+  display: none;
+}
+
+/* Hamburger icon */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.hamburger {
+  font-size: 22px;
+  cursor: pointer;
+  color: #111827; /* header version */
+}
+
+.sidebar-top {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px;
+}
+
+

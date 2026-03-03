@@ -3,30 +3,75 @@ import "../css/Login.css";
 import manImage from "../photos/admin_login.png";
 import { FaUserShield, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
+import { auth } from "../Backend/firebase-init";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "../Backend/firebase-init";
 
 function Login() {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
-
-  // username & password state
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleLogin = () => {
-    // 🔑 hardcoded admin credentials
-    if (username === "admin" && password === "admin123") {
+  const handleLogin = async () => {
+  if (!email || !password) {
+    setError("Please enter email and password");
+    return;
+  }
+
+  try {
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    const uid = userCredential.user.uid;
+
+    // 🔍 Find society linked to this admin
+    const q = query(
+      collection(db, "societies"),
+      where("adminUid", "==", uid)
+    );
+
+    const snapshot = await getDocs(q);
+
+    if (!snapshot.empty) {
+      const societyDoc = snapshot.docs[0];
+
+      // ✅ CLEAR OLD DATA FIRST
+     
+      // ✅ Save new society context
+      localStorage.setItem("societyId", societyDoc.id);
+      localStorage.setItem("societyCode", societyDoc.data().code);
+      localStorage.setItem("societyName", societyDoc.data().name);
+
       setError("");
-
-      // save login state
-      localStorage.setItem("isAdminLoggedIn", "true");
-
-
-      // redirect to manage members page
-      navigate("/ManageMembers");
+      navigate("/manage-members");
     } else {
-      setError("Invalid username or password");
+      setError("Society not found");
+    }
+
+  } catch (error) {
+    setError("Invalid Email or Password");
+  }
+};
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setError("Enter your email first");
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      alert("Password reset link sent to your email ✅");
+      setError("");
+    } catch (error) {
+      setError("Error sending reset email");
     }
   };
 
@@ -41,13 +86,13 @@ function Login() {
       <div className="login-right">
         <h2>Admin Login</h2>
 
-        {/* Username */}
+        {/* Email */}
         <div className="input-box">
           <input
-            type="text"
-            placeholder="Admin Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            type="email"
+            placeholder="Admin Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <FaUserShield className="input-icon" />
         </div>
@@ -75,6 +120,13 @@ function Login() {
         <button className="login-btn" onClick={handleLogin}>
           Login
         </button>
+
+        <p
+          style={{ marginTop: "15px", cursor: "pointer", color: "#4a90e2" }}
+          onClick={handleForgotPassword}
+        >
+          Forgot Password?
+        </p>
       </div>
     </div>
   );

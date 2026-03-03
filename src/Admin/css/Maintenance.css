@@ -9,8 +9,8 @@
   align-items: center;
 }
 
-.add-btn {
-  background: #000;
+.add-maintenance {
+  background: #4f46e5;;
   color: #fff;
   border: none;
   padding: 8px 14px;
@@ -24,13 +24,17 @@
   border-collapse: collapse;
 }
 
-.maintenance-table th,
+
 .maintenance-table td {
   padding: 12px;
   border-bottom: 1px solid #ddd;
   text-align: center;
 }
-
+.maintenance-table th {
+  font-weight: 600;   /* medium bold */
+  font-size: 16px;
+  color: #1f2937;     /* strong but not pure black */
+}
 .no-data {
   text-align: center;
   padding: 20px;
@@ -78,7 +82,7 @@
 
 .modal-body label {
   display: block;
-  margin: 10px 0 4px;
+  margin: 10px 0 5px;
 }
 
 .modal-body input {
@@ -91,7 +95,7 @@
 .radio-group {
   display: flex;
   gap: 10px;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .error-text {
@@ -105,18 +109,22 @@
   gap: 10px;
   margin-top: 20px;
 }
-
-.cancel-btn {
-  padding: 8px 14px;
-  border: 1px solid #ccc;
-  background: #fff;
-  border-radius: 6px;
+.cancel-maintenance,
+.submit-maintenance {
+  height: 52px;   /* same height */
+  padding: 0 18px;
+  border-radius: 10px;
+  font-size: 15px;
 }
 
-.submit-btn {
-  padding: 8px 14px;
-  background: #4da3ff;
-  color: #fff;
+.cancel-maintenance {
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #111827;
+}
+
+.submit-maintenance {
   border: none;
-  border-radius: 6px;
+  background: #4caf6d;
+  color: #ffffff;
 }
