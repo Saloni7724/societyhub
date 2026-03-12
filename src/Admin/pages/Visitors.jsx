@@ -95,7 +95,7 @@ const Visitors = () => {
     v.name?.toLowerCase().includes(search.toLowerCase())
   );
 
-  const qrImage = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${websiteURL}`;
+ const qrImage = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(websiteURL)}`;
 
   return (
     <AdminLayout active="visitors">
