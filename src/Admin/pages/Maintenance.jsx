@@ -3,19 +3,21 @@ import AdminLayout from "../layout/AdminLayout";
 import "../css/Maintenance.css";
 import { FiX } from "react-icons/fi";
 import { db } from "../Backend/firebase-init";
-
 import {
   collection,
   addDoc,
   onSnapshot,
   serverTimestamp,
-  getDocs
+  getDocs,
+  doc,
+  updateDoc,
+  increment
 } from "firebase/firestore";
 const societyId = localStorage.getItem("societyId");
 const Maintenance = () => {
   const [showModal, setShowModal] = useState(false);
   const [rows, setRows] = useState([]);
-
+const [error, setError] = useState("");
   const [formData, setFormData] = useState({
   title: "",
   date: "",

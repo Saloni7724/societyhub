@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import AdminLayout from "../layout/AdminLayout";
 import {
   collection,
@@ -26,7 +26,7 @@ const fetchTransactions = useCallback(async () => {
         orderBy("createdAt", "desc")
       );
 
-    const snapshot = await getDocs(q);
+    const snapshot = await getDocs(transactionQuery);
     const list = snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()

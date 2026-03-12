@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import AdminLayout from "../layout/AdminLayout";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
-import { updateDoc } from "firebase/firestore";
+import { setDoc, getDoc } from "firebase/firestore";
 import {
   collection,
   addDoc,
@@ -9,9 +9,9 @@ import {
   deleteDoc,
   doc,
   updateDoc,
-  getDoc,
   query,
-  where
+  where,
+  increment
 } from "firebase/firestore";
 import { db } from "../Backend/firebase-init";
 import "../css/Expenses.css";
@@ -22,7 +22,7 @@ const Expenses = () => {
   const [showModal, setShowModal] = useState(false);
   const [expenses, setExpenses] = useState([]);
   const [editId, setEditId] = useState(null);
-
+const [totalMembers, setTotalMembers] = useState(0);
   useEffect(() => {
   ensureFinanceDoc();
   fetchExpenses();
@@ -36,7 +36,20 @@ const Expenses = () => {
     assignTo: "All Members",
   });
 
-  
+  const fetchMeta = async () => {
+  const membersSnapshot = await getDocs(
+    collection(db, "societies", societyId, "members")
+  );
+  setTotalMembers(membersSnapshot.size);
+};
+const ensureFinanceDoc = async () => {
+  const financeRef = doc(db, "societies", societyId, "meta", "finance");
+  const snap = await getDoc(financeRef);
+
+  if (!snap.exists()) {
+    await setDoc(financeRef, { totalBalance: 0 });
+  }
+};
 
   const expensesRef = collection(db, "societies", societyId, "expenses");
 
