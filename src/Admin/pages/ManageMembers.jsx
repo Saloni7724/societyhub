@@ -2,6 +2,7 @@ import "../css/ManageMembers.css";
 import AdminLayout from "../layout/AdminLayout";
  import { query, orderBy } from "firebase/firestore";
 import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -40,10 +41,7 @@ const societyId = localStorage.getItem("societyId");
   const [isEdit, setIsEdit] = useState(false);
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
-  const membersRef = societyId
-  ? collection(db, "societies", societyId, "members")
-  : null;
-
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -87,7 +85,7 @@ useEffect(() => {
   if (societyId) {
     fetchMembers();
   }
-}, [societyId]);
+}, [societyId, fetchMembers]);
   /* ------------------ FETCH MEMBERS ------------------ */
 /* ------------------ FETCH MEMBERS ------------------ */
 const fetchMembers = async () => {

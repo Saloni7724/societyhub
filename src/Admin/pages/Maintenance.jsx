@@ -22,12 +22,62 @@ const Maintenance = () => {
   status: "Upcoming",
   amount: "100",
   targetType: "All",
+  profession: "",
+  month: ""
 });
 
-  const [error, setError] = useState("");
+
+
+const payMaintenance = async (row, paidBy = "admin") => {
+  try {
+    const maintenanceRef = doc(
+      db,
+      "societies",
+      societyId,
+      "maintenance",
+      row.id
+    );
+
+    const paymentAmount = Number(row.pendingAmount);
+
+    // 1️⃣ Update maintenance
+    await updateDoc(maintenanceRef, {
+      paidAmount: Number(row.paidAmount) + paymentAmount,
+      pendingAmount: 0,
+      status: "Paid"
+    });
+
+    // 2️⃣ Add transaction
+    await addDoc(
+      collection(db, "societies", societyId, "transactions"),
+      {
+        date: new Date().toLocaleDateString(),
+        description: `Maintenance Payment - ${row.month}`,
+        category: "Maintenance",
+        flatNo: row.flat,
+        paymentMethod: paidBy === "admin" ? "Cash" : "Online", // ⭐ key logic
+        type: "Credit",
+        amount: paymentAmount,
+        createdAt: serverTimestamp()
+      }
+    );
+     await updateDoc(
+      doc(db, "societies", societyId, "meta", "finance"),
+      { totalBalance: increment(paymentAmount) }
+    );
+
+    alert("Maintenance paid successfully");
+
+  } catch (error) {
+    console.error("Payment failed:", error);
+  }
+};
+
+
+ 
 
   /* 🔥 FETCH DATA REALTIME */
- useEffect(() => {
+useEffect(() => {
   if (!societyId) return;
 
   const unsubscribe = onSnapshot(
@@ -42,7 +92,9 @@ const Maintenance = () => {
   );
 
   return () => unsubscribe();
-}, [societyId]);
+
+// eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
 
   /* OPEN / CLOSE MODAL */
   const openModal = () => {

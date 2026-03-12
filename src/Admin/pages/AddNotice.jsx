@@ -15,14 +15,19 @@ import {
   orderBy,
   serverTimestamp,
 } from "firebase/firestore";
-const societyId = localStorage.getItem("societyId");
+
 const AddNotice = () => {
+
+  const societyId = localStorage.getItem("societyId");
+
   const [showModal, setShowModal] = useState(false);
   const [notices, setNotices] = useState([]);
 
   const [showConfirm, setShowConfirm] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-const [errors, setErrors] = useState({});
+
+  const [errors, setErrors] = useState({});
+
   const [form, setForm] = useState({
     title: "",
     date: "",
@@ -31,88 +36,95 @@ const [errors, setErrors] = useState({});
   });
 
   /* FETCH NOTICES */
- useEffect(() => {
+  const fetchNotices = async () => {
+    if (!societyId) return;
+
+    try {
+      const q = query(
+        collection(db, "societies", societyId, "notices"),
+        orderBy("createdAt", "desc")
+      );
+
+      const snapshot = await getDocs(q);
+
+      const data = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setNotices(data);
+    } catch (err) {
+      console.error("Error fetching notices:", err);
+    }
+  };
+
+useEffect(() => {
   if (societyId) fetchNotices();
-}, [societyId]);
+// eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
 
- const fetchNotices = async () => {
-  if (!societyId) return;
-
-  try {
-    const q = query(
-      collection(db, "societies", societyId, "notices"),
-      orderBy("createdAt", "desc")
-    );
-    const snapshot = await getDocs(q);
-
-    const data = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-
-    setNotices(data);
-  } catch (err) {
-    console.error("Error fetching notices:", err);
-  }
-};
   /* HANDLE INPUT */
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
+
+  /* VALIDATE FORM */
   const validateForm = () => {
-  let newErrors = {};
+    let newErrors = {};
 
-  const todayDate = new Date();
-  todayDate.setHours(0, 0, 0, 0);
+    const todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0);
 
-  if (!form.title.trim()) {
-    newErrors.title = "Notice title is required";
-  }
-
-  if (!form.date) {
-    newErrors.date = "Date is required";
-  } else {
-    const selectedDate = new Date(form.date);
-
-    if (selectedDate < todayDate) {
-      newErrors.date = "Past dates are not allowed";
+    if (!form.title.trim()) {
+      newErrors.title = "Notice title is required";
     }
-  }
 
-  if (!form.message.trim()) {
-    newErrors.message = "Content is required";
-  }
+    if (!form.date) {
+      newErrors.date = "Date is required";
+    } else {
+      const selectedDate = new Date(form.date);
 
-  setErrors(newErrors);
+      if (selectedDate < todayDate) {
+        newErrors.date = "Past dates are not allowed";
+      }
+    }
 
-  return Object.keys(newErrors).length === 0;
-};
+    if (!form.message.trim()) {
+      newErrors.message = "Content is required";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
   /* ADD NOTICE */
- const handleAddNotice = async () => {
-  if (!validateForm()) return;
-  if (!societyId) return alert("Society not found");
+  const handleAddNotice = async () => {
+    if (!validateForm()) return;
+    if (!societyId) return alert("Society not found");
 
-  try {
-    await addDoc(collection(db, "societies", societyId, "notices"), {
-      ...form,
-      createdAt: serverTimestamp(),
-    });
+    try {
+      await addDoc(collection(db, "societies", societyId, "notices"), {
+        ...form,
+        createdAt: serverTimestamp(),
+      });
 
-    setForm({
-      title: "",
-      date: "",
-      message: "",
-      priority: "high",
-    });
+      setForm({
+        title: "",
+        date: "",
+        message: "",
+        priority: "high",
+      });
 
-    setErrors({});
-    setShowModal(false);
-    fetchNotices();
-  } catch (err) {
-    console.error("Error adding notice:", err);
-    alert("Error saving notice");
-  }
-};
+      setErrors({});
+      setShowModal(false);
+      fetchNotices();
+    } catch (err) {
+      console.error("Error adding notice:", err);
+      alert("Error saving notice");
+    }
+  };
+
   /* DELETE CONFIRM */
   const confirmDelete = (id) => {
     setDeleteId(id);
@@ -121,16 +133,20 @@ const [errors, setErrors] = useState({});
 
   /* DELETE NOTICE */
   const handleDelete = async () => {
-  if (!societyId || !deleteId) return;
-  try {
-    await deleteDoc(doc(db, "societies", societyId, "notices", deleteId));
-    setShowConfirm(false);
-    fetchNotices();
-  } catch (err) {
-    console.error("Error deleting notice:", err);
-    alert("Error deleting notice");
-  }
-};
+    if (!societyId || !deleteId) return;
+
+    try {
+      await deleteDoc(
+        doc(db, "societies", societyId, "notices", deleteId)
+      );
+
+      setShowConfirm(false);
+      fetchNotices();
+    } catch (err) {
+      console.error("Error deleting notice:", err);
+      alert("Error deleting notice");
+    }
+  };
 
   return (
     <AdminLayout active="notice">
@@ -160,6 +176,7 @@ const [errors, setErrors] = useState({});
                 <span className={`priority ${n.priority}`}>
                   {n.priority}
                 </span>
+
                 <FiTrash2
                   className="delete-icon"
                   onClick={() => confirmDelete(n.id)}
@@ -174,6 +191,7 @@ const [errors, setErrors] = useState({});
       {showModal && (
         <div className="notice-modal-overlay">
           <div className="notice-modal">
+
             <button
               className="close-btn"
               onClick={() => setShowModal(false)}
@@ -192,14 +210,14 @@ const [errors, setErrors] = useState({});
             />
             {errors.title && <span className="error">{errors.title}</span>}
 
-              <input
-               type="date"
-               name="date"
+            <input
+              type="date"
+              name="date"
               min={new Date().toISOString().split("T")[0]}
               value={form.date}
               onChange={handleChange}
             />
-              {errors.date && <span className="error">{errors.date}</span>}
+            {errors.date && <span className="error">{errors.date}</span>}
 
             <label>Content</label>
             <textarea
@@ -224,6 +242,7 @@ const [errors, setErrors] = useState({});
             <button className="post-btn" onClick={handleAddNotice}>
               Post Notice
             </button>
+
           </div>
         </div>
       )}
@@ -232,18 +251,24 @@ const [errors, setErrors] = useState({});
       {showConfirm && (
         <div className="confirm-overlay">
           <div className="confirm-box">
+
             <h4>Delete Notice?</h4>
             <p>This action cannot be undone.</p>
 
             <div className="confirm-actions">
-              <button onClick={() => setShowConfirm(false)}>Cancel</button>
+              <button onClick={() => setShowConfirm(false)}>
+                Cancel
+              </button>
+
               <button className="danger" onClick={handleDelete}>
                 Delete
               </button>
             </div>
+
           </div>
         </div>
       )}
+
     </AdminLayout>
   );
 };

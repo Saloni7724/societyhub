@@ -16,11 +16,15 @@ const Transactions = () => {
   const [balance, setBalance] = useState(0);
   const [filter, setFilter] = useState("All");
 
-  const fetchTransactions = async () => {
-    const q = query(
-      collection(db, "societies", societyId, "transactions"),
-      orderBy("createdAt", "desc")
-    );
+const fetchTransactions = useCallback(async () => {
+    if (!societyId) return;
+
+    try {
+      // 1️⃣ Fetch manual transactions
+      const transactionQuery = query(
+        collection(db, "societies", societyId, "transactions"),
+        orderBy("createdAt", "desc")
+      );
 
     const snapshot = await getDocs(q);
     const list = snapshot.docs.map(doc => ({
@@ -40,8 +44,12 @@ const Transactions = () => {
       }
     });
 
-    setBalance(total);
-  };
+      setBalance(total);
+
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+    }
+  }, [societyId]);
 
   useEffect(() => {
     fetchTransactions();

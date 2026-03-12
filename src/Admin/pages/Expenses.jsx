@@ -8,7 +8,10 @@ import {
   getDocs,
   deleteDoc,
   doc,
-  increment
+  updateDoc,
+  getDoc,
+  query,
+  where
 } from "firebase/firestore";
 import { db } from "../Backend/firebase-init";
 import "../css/Expenses.css";
@@ -18,7 +21,13 @@ const societyId = localStorage.getItem("societyId");
 const Expenses = () => {
   const [showModal, setShowModal] = useState(false);
   const [expenses, setExpenses] = useState([]);
-const [editId, setEditId] = useState(null);
+  const [editId, setEditId] = useState(null);
+
+  useEffect(() => {
+  ensureFinanceDoc();
+  fetchExpenses();
+  fetchMeta();
+}, []);
   const [formData, setFormData] = useState({
     title: "",
     category: "",
@@ -40,6 +49,24 @@ const [editId, setEditId] = useState(null);
     }));
     setExpenses(expenseList);
   };
+useEffect(() => {
+  const init = async () => {
+    await ensureFinanceDoc();
+    await fetchExpenses();
+    await fetchMeta();
+  };
+
+  init();
+
+// eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
+  
+  // ================= LIVE PER-MEMBER SPLIT =================
+  const perMemberAmount = useMemo(() => {
+    const amt = Number(formData.amount || 0);
+    if (!amt || totalMembers <= 0) return 0;
+    return (amt / totalMembers).toFixed(2);
+  }, [formData.amount, totalMembers]);
 
   useEffect(() => {
     fetchExpenses();
@@ -53,11 +80,19 @@ const [editId, setEditId] = useState(null);
     });
   };
 
-  // ================= ADD CUSTOM GROUP =================
- 
+  // ================= PREVENT DOUBLE TRANSACTION =================
+  const transactionExists = async (expenseId) => {
+    const q = query(
+      collection(db, "societies", societyId, "transactions"),
+      where("expenseId", "==", expenseId)
+    );
+    const snap = await getDocs(q);
+    return !snap.empty;
+  };
 
-  // ================= ADD TO FIRESTORE =================
-  const handleSubmit = async (e) => {
+  // ================= SUBMIT =================
+// ================= SUBMIT =================
+const handleSubmit = async (e) => {
   e.preventDefault();
 
   const today = new Date().toISOString().split("T")[0];
