@@ -102,10 +102,8 @@ function App() {
 
       <Route
         path="/visitor-form"
-        element={
-          <ProtectedRoute>
-            <VisitorForm />
-          </ProtectedRoute>
+        element={<VisitorForm />
+        
         }
       />
 
