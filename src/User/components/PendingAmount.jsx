@@ -53,8 +53,9 @@ const PendingAmount = () => {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+  fetchData();
+// eslint-disable-next-line
+}, []);
 
   /* PAYMENT */
 

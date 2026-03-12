@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../Backend/firebase-init";
 
+
 const LoginUser = () => {
 
   const [flat, setFlat] = useState("");
@@ -41,10 +42,11 @@ const LoginUser = () => {
       return;
     }
 
-    const membersQuery = query(
-      collection(db, "societies", societyId, "members"),
-      where("flat", "==", flat)
-    );
+   const membersQuery = query(
+  collection(db, "societies", societyId, "members"),
+  where("flat", "==", flat),
+  where("password", "==", password)
+);
 
     const membersSnapshot = await getDocs(membersQuery);
 

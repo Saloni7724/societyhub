@@ -35,6 +35,8 @@ const Dashboard = () => {
   const [activePage, setActivePage] = useState("profile");
   const [societyName, setSocietyName] = useState("");
 
+  
+
   /* ⭐ Fetch Society Name From Firebase */
   useEffect(() => {
 

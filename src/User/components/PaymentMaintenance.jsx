@@ -35,8 +35,9 @@ const PaymentMaintenance = () => {
   };
 
   useEffect(() => {
-    fetchPayments();
-  }, []);
+  fetchPayments();
+// eslint-disable-next-line
+}, []);
 
   const formatINR = (value) => {
     return new Intl.NumberFormat("en-IN", {
