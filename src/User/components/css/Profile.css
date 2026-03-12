@@ -1,7 +1,7 @@
 /* 🌌 Modern Soft Gradient Background (No White) */
 .profile-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #ffffff, #ffffff, #ffffff);
+  background: linear-gradient(135deg, #e4c3c3, #e7cbd5, #ffffff);
   font-family: "Poppins", sans-serif;
   padding: 50px 20px;
 }
@@ -126,25 +126,30 @@
 }
 
 /* Buttons */
+
 .edit-btn {
-  width: 100%;
-  margin-top: 25px;
-  padding: 14px;
+  margin-top: 20px;
+  padding: 20px 40px;
+  background-color: #4facfe;
+  color: rgb(5, 5, 5);
   border: none;
-  border-radius: 12px;
-  cursor: pointer;
-
-  font-size: 15px;
+  border-radius: 4px;   /* very small corner = square look */
+  font-size: 13px;
   font-weight: 600;
-  color: white;
-
-  background: linear-gradient(to right, #14b8a6, #6366f1);
-  transition: 0.3s ease;
+  cursor: pointer;
+  display: inline-block;
+  transition: all 0.3s ease;
 }
 
+/* hover effect */
 .edit-btn:hover {
-  opacity: 0.9;
-  transform: scale(1.03);
+  background-color: #2f80ed;
+  transform: scale(1.05);
+}
+
+/* ⭐ Optional Edit Icon Style (If You Add Icon Later) */
+.edit-btn svg {
+  font-size: 40px;
 }
 
 /* Form */
@@ -300,6 +305,16 @@
   font-weight: 700;
   color: #0e0101;
 }
+/* Multiple Profile Cards Layout */
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+
 
 
 

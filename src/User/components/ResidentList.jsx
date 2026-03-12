@@ -1,90 +1,101 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./css/ResidentList.css";
 
-const ResidentList = () => {
-  const residentsData = [
-    {
-      name: "Mansi Patel",
-      email: "MansiPatel1708@gmail.com",
-      flat: "A-101",
-      contact: "9875046562",
-      profession: "Job",
-      type: "IT",
-    },
-    {
-      name: "Saloni Patel",
-      email: "SaloniPatel7720@gmail.com",
-      flat: "A-102",
-      contact: "9764257613",
-      profession: "Job",
-      type: "Account",
-    },
-    {
-      name: "Vishwa Dave",
-      email: "Vishwadave3120@gmail.com",
-      flat: "A-103",
-      contact: "8942387951",
-      profession: "Business",
-      type: "Finance",
-    },
-    {
-      name: "Mahi Patel",
-      email: "MahiPatel8765@gmail.com",
-      flat: "A-104",
-      contact: "8912476573",
-      profession: "Job",
-      type: "Education",
-    },
-    {
-      name: "Ravi Shah",
-      email: "ravishah@gmail.com",
-      flat: "B-201",
-      contact: "9876543210",
-      profession: "Business",
-      type: "Marketing",
-    },
-  ];
+/* Firebase */
+import { db } from "../Backend/firebase-init";
+import { collection, onSnapshot } from "firebase/firestore";
 
+const ResidentList = () => {
+
+  const societyId = localStorage.getItem("societyId");
+
+  const [residentsData, setResidentsData] = useState([]);
   const [search, setSearch] = useState("");
   const [flatFilter, setFlatFilter] = useState("All");
   const [professionFilter, setProfessionFilter] = useState("All");
+  const [blockFilter, setBlockFilter] = useState("All");
 
   /* Pagination */
   const [currentPage, setCurrentPage] = useState(1);
   const residentsPerPage = 4;
 
-  /* Unique Flats */
+  /* ================= FETCH DATA ================= */
+
+  useEffect(() => {
+
+    if (!societyId) return;
+
+    const membersRef = collection(
+      db,
+      "societies",
+      societyId,
+      "members"
+    );
+
+    const unsub = onSnapshot(membersRef, (snapshot) => {
+
+      const list = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setResidentsData(list);
+
+    });
+
+    return () => unsub();
+
+  }, [societyId]);
+
+  /* ================= UNIQUE FILTERS ================= */
+
   const flats = ["All", ...new Set(residentsData.map((r) => r.flat))];
 
-  /* Unique Professions */
   const professions = [
     "All",
     ...new Set(residentsData.map((r) => r.profession)),
   ];
 
-  /* Filter Logic */
+  const blocks = [
+    "All",
+    ...new Set(residentsData.map((r) => r.block)),
+  ];
+
+  /* ================= FILTER LOGIC ================= */
+
   const filteredResidents = residentsData.filter((r) => {
+
     return (
-      r.name.toLowerCase().includes(search.toLowerCase()) &&
+      r.name?.toLowerCase().includes(search.toLowerCase()) &&
       (flatFilter === "All" || r.flat === flatFilter) &&
-      (professionFilter === "All" || r.profession === professionFilter)
+      (professionFilter === "All" || r.profession === professionFilter) &&
+      (blockFilter === "All" || r.block === blockFilter)
     );
+
   });
 
-  /* Pagination Logic */
+  /* ================= PAGINATION ================= */
+
   const indexOfLast = currentPage * residentsPerPage;
   const indexOfFirst = indexOfLast - residentsPerPage;
-  const currentResidents = filteredResidents.slice(indexOfFirst, indexOfLast);
 
-  const totalPages = Math.ceil(filteredResidents.length / residentsPerPage);
+  const currentResidents = filteredResidents.slice(
+    indexOfFirst,
+    indexOfLast
+  );
+
+  const totalPages = Math.ceil(
+    filteredResidents.length / residentsPerPage
+  );
 
   return (
     <div className="resident-container">
-      {/* Title */}
+
       <h2 className="resident-title">Resident List</h2>
 
-      {/* Search + Filters */}
+      {/* SEARCH + FILTER */}
       <div className="resident-filters">
+
         <input
           type="text"
           placeholder="Search Resident Name..."
@@ -105,7 +116,9 @@ const ResidentList = () => {
 
         <select
           value={professionFilter}
-          onChange={(e) => setProfessionFilter(e.target.value)}
+          onChange={(e) =>
+            setProfessionFilter(e.target.value)
+          }
         >
           {professions.map((pro, index) => (
             <option key={index} value={pro}>
@@ -113,71 +126,105 @@ const ResidentList = () => {
             </option>
           ))}
         </select>
+
+        {/* BLOCK FILTER */}
+        <select
+          value={blockFilter}
+          onChange={(e) =>
+            setBlockFilter(e.target.value)
+          }
+        >
+          {blocks.map((b, index) => (
+            <option key={index} value={b}>
+              Block: {b}
+            </option>
+          ))}
+        </select>
+
       </div>
 
-      {/* Table */}
+      {/* TABLE */}
       <div className="resident-table-box">
         <table className="resident-table">
+
           <thead>
             <tr>
-              <th>Resident Name</th>
+              <th>Name</th>
               <th>Email</th>
-              <th>Flat No.</th>
-              <th>Contact</th>
+              <th>Flat</th>
+              <th>Block</th>
+              <th>Phone</th>
               <th>Profession</th>
               <th>Type</th>
             </tr>
           </thead>
 
           <tbody>
+
             {currentResidents.length > 0 ? (
-              currentResidents.map((r, index) => (
-                <tr key={index}>
+
+              currentResidents.map((r) => (
+
+                <tr key={r.id}>
                   <td>{r.name}</td>
                   <td>{r.email}</td>
                   <td>{r.flat}</td>
-                  <td>{r.contact}</td>
+                  <td>{r.block}</td>
+                  <td>{r.phone}</td>
 
                   <td>
-                    <span className="profession-badge">{r.profession}</span>
+                    <span className="profession-badge">
+                      {r.profession}
+                    </span>
                   </td>
 
                   <td>
-                    <span className="type-badge">{r.type}</span>
+                    <span className="type-badge">
+                      {r.type}
+                    </span>
                   </td>
                 </tr>
+
               ))
+
             ) : (
+
               <tr>
-                <td colSpan="6" style={{ padding: "20px", color: "red" }}>
-                  No Residents Found!
+                <td colSpan="7" style={{ padding: "20px", color: "red" }}>
+                  No Residents Found
                 </td>
               </tr>
+
             )}
+
           </tbody>
+
         </table>
       </div>
 
-      {/* Pagination */}
+      {/* PAGINATION */}
       <div className="pagination">
+
         <button
-          className="prev-btn"
           disabled={currentPage === 1}
           onClick={() => setCurrentPage(currentPage - 1)}
         >
           Previous
         </button>
 
-        <div className="page-number">{currentPage}</div>
+        <div className="page-number">
+          {currentPage}
+        </div>
 
         <button
-          className="next-btn"
           disabled={currentPage === totalPages}
           onClick={() => setCurrentPage(currentPage + 1)}
         >
           Next
         </button>
+
       </div>
+
     </div>
   );
 };

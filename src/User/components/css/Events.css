@@ -1,479 +1,361 @@
-/* ✅ Page Background */
+
+/* Society Event Page */
+
+
 .events-page {
-  padding: 60px;
+  padding: 70px 40px;
   min-height: 100vh;
   font-family: "Poppins", sans-serif;
   background: linear-gradient(to right, #f8fafc, #eef2ff);
 }
 
-/* ✅ Title */
+/* Title */
+
 .events-title {
   text-align: center;
-  font-size: 38px;
+  font-size: 42px;
   font-weight: 800;
   color: #0f172a;
+  margin-bottom: 20px;
 }
+
+/* Subtitle */
 
 .events-subtitle {
   text-align: center;
   font-size: 16px;
   color: #64748b;
-  margin-bottom: 50px;
+  margin-bottom: 80px;
 }
 
-/* ✅ Grid Layout */
-.events-grid {
+
+/* Grid Layout */
+
+
+.events-grid1 {
   display: flex;
   justify-content: center;
-  gap: 35px;
+  gap: 60px;
   flex-wrap: wrap;
 }
 
-/* ✅ Event Card */
+
+/* Event Card */
+
+
 .event-card {
-  width: 370px;
+  width: 360px;
+  min-height: 300px;
   padding: 30px;
   border-radius: 22px;
   background: white;
-  box-shadow: 0px 12px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px 12px 30px rgba(0,0,0,0.12);
   transition: 0.35s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   position: relative;
   overflow: hidden;
 }
 
-/* Gradient Border */
+/* Gradient Top Border */
+
 .event-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 6px;
-  width: 100%;
-  background: linear-gradient(to right, #ff0080, #7928ca, #00c6ff);
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  height:6px;
+  width:100%;
+  background: linear-gradient(to right,#ff0080,#7928ca,#00c6ff);
 }
 
 /* Hover */
+
 .event-card:hover {
-  transform: translateY(-10px) scale(1.03);
-  box-shadow: 0px 18px 40px rgba(0, 0, 0, 0.22);
+  transform: translateY(-10px);
+  box-shadow: 0px 18px 40px rgba(0,0,0,0.2);
 }
 
-/* Title */
+/* Event Title */
+
 .event-card h3 {
   font-size: 22px;
   font-weight: 700;
-  margin-bottom: 18px;
   color: #0f172a;
+  margin-bottom: 15px;
 }
 
-/* Text */
+/* Event Text */
+
 .event-card p {
   font-size: 15px;
-  margin: 10px 0;
   color: #334155;
+  margin: 6px 0;
+  line-height: 1.6;
 }
 
-/* Amount Highlight */
+/* Amount */
+
 .amount {
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 700;
-  color: red;
+  color: #dc2626;
   margin-top: 15px;
 }
 
-/* ✅ Button */
+
+/* Event Details Section (Clean Organized) */
+
+
+.event-details {
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.event-details p {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #475569;
+}
+
+.event-details b {
+  color: #0f172a;
+}
+
+/* Details Button */
+
 .details-btn {
   margin-top: 25px;
   width: 100%;
   padding: 14px;
   border: none;
   border-radius: 16px;
-  background: linear-gradient(to right, #2563eb, #4f46e5);
+  background: linear-gradient(to right,#2563eb,#4f46e5);
   color: white;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.35s;
+  transition: 0.3s;
 }
 
 .details-btn:hover {
-  background: linear-gradient(to right, #ff0080, #7928ca);
-  transform: scale(1.03);
-}
-
-/* ============================= */
-/* ✅ MODAL POPUP DESIGN */
-/* ============================= */
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(15, 23, 42, 0.65);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
-
-/* Modal Box */
-.modal-box {
-  width: 450px;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(15px);
-  border-radius: 22px;
-  padding: 25px;
-  box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.3);
-  animation: popup 0.35s ease;
-}
-
-/* Animation */
-@keyframes popup {
-  from {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-/* Modal Header */
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-header h2 {
-  font-size: 22px;
-  font-weight: 700;
-  color: #0f172a;
-}
-
-/* Close Button */
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  color: red;
-  font-weight: bold;
-  transition: 0.2s;
-}
-
-.close-btn:hover {
-  transform: scale(1.2);
-}
-
-/* Modal Body */
-.modal-body {
-  margin-top: 20px;
-}
-
-.modal-body p {
-  font-size: 16px;
-  margin: 12px 0;
-  color: #334155;
-}
-
-/* Pay Button */
-.pay-btn {
-  margin-top: 25px;
-  width: 100%;
-  padding: 14px;
-  border: none;
-  border-radius: 16px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  color: white;
-  background: linear-gradient(to right, #22c55e, #16a34a);
-  transition: 0.3s;
-}
-
-.pay-btn:hover {
-  background: linear-gradient(to right, #15803d, #22c55e);
-  transform: scale(1.03);
-}
-
-/* ✅ Responsive */
-@media (max-width: 600px) {
-  .event-card {
-    width: 100%;
-  }
-
-  .modal-box {
-    width: 90%;
-  }
-}
-/* Overlay Blur Background */
-.details-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(15, 23, 42, 0.55);
-  backdrop-filter: blur(10px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
-
-/* Full Details Page Box */
-.details-page {
-  width: 520px;
-  background: white;
-  border-radius: 22px;
-  padding: 30px;
-  box-shadow: 0px 18px 45px rgba(0, 0, 0, 0.3);
-  animation: popup 0.35s ease;
-}
-
-/* Popup Animation */
-@keyframes popup {
-  from {
-    transform: scale(0.85);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-/* Header */
-.details-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.details-header h2 {
-  font-size: 22px;
-  font-weight: 700;
-  color: #0f172a;
-}
-
-/* Close Button */
-.close-btn {
-  border: none;
-  background: none;
-  font-size: 20px;
-  cursor: pointer;
-  color: red;
-}
-
-/* Form Styling */
-.details-form {
-  margin-top: 25px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.details-form label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #334155;
-}
-
-/* Inputs */
-.details-form input,
-.details-form select {
-  padding: 12px;
-  border-radius: 14px;
-  border: 1px solid #cbd5e1;
-  font-size: 15px;
-  outline: none;
-}
-
-.details-form input:disabled {
-  background: #f1f5f9;
-  font-weight: 600;
-}
-
-/* Pay Button */
-.pay-btn {
-  margin-top: 15px;
-  padding: 14px;
-  border: none;
-  border-radius: 16px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  color: white;
-  background: linear-gradient(to right, #22c55e, #16a34a);
-  transition: 0.3s;
-}
-
-.pay-btn:hover {
-  transform: scale(1.03);
-  background: linear-gradient(to right, #15803d, #22c55e);
-}
-/* =============================== */
-/* ✅ Payment Success Popup */
-/* =============================== */
-
-.success-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(8px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-}
-
-.success-box {
-  width: 420px;
-  background: white;
-  padding: 35px;
-  border-radius: 22px;
-  text-align: center;
-  box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.35);
-  animation: popSuccess 0.4s ease;
-}
-
-@keyframes popSuccess {
-  from {
-    transform: scale(0.75);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.success-box h2 {
-  font-size: 26px;
-  font-weight: 800;
-  color: #16a34a;
-  margin-bottom: 15px;
-}
-
-.success-box p {
-  font-size: 16px;
-  color: #334155;
-  margin-bottom: 25px;
-}
-
-/* Done Button */
-.done-btn {
-  padding: 13px 28px;
-  border: none;
-  border-radius: 16px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  color: white;
-  background: linear-gradient(to right, #22c55e, #16a34a);
-  transition: 0.3s;
-}
-
-.done-btn:hover {
-  transform: scale(1.05);
-  background: linear-gradient(to right, #15803d, #22c55e);
-}
-/* Blur Background Overlay */
-.details-overlay,
-.success-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  backdrop-filter: blur(8px);
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-}
-
-/* Details Page Box */
-.details-page {
-  width: 420px;
-  background: white;
-  padding: 25px;
-  border-radius: 20px;
-  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-/* Success Popup */
-.success-box {
-  width: 400px;
-  background: white;
-  padding: 25px;
-  border-radius: 20px;
-  text-align: center;
-  box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.3);
-}
-
-/* Receipt Button */
-.receipt-btn {
-  width: 100%;
-  margin: 15px 0;
-  padding: 13px;
-  border: none;
-  border-radius: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  color: white;
-  background: linear-gradient(to right, #2563eb, #4f46e5);
-}
-
-.receipt-btn:hover {
+  background: linear-gradient(to right,#ff0080,#7928ca);
   transform: scale(1.04);
 }
 
-/* Done Button */
-.done-btn {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  background: #22c55e;
-  color: white;
+
+/* Responsive */
+/* ============================= */
+
+@media (max-width:768px){
+
+  .events-page{
+    padding:40px 20px;
+  }
+
+  .event-card{
+    width:100%;
+  }
+
+  .events-title{
+    font-size:32px;
+  }
+
 }
-.event-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
+/* ============================= */
+/* Event Cards */
+/* ============================= */
+
+.events-page{
+  padding:70px 40px;
+  min-height:100vh;
+  font-family:"Poppins",sans-serif;
+  background:linear-gradient(to right,#f8fafc,#eef2ff);
 }
-.details-page {
-  position: relative;   /* 🔥 Very Important */
-  background: #fff;
-  padding: 30px;
-  border-radius: 20px;
-  width: 400px;
+
+.events-title{
+  text-align:center;
+  font-size:42px;
+  font-weight:800;
+  margin-bottom:50px;
+  color:#0f172a;
+}
+
+/* Grid */
+
+.events-grid1{
+  display:flex;
+  justify-content:center;
+  gap:60px;
+  flex-wrap:wrap;
+}
+
+/* Card */
+
+.event-card{
+  width:360px;
+  padding:30px;
+  border-radius:22px;
+  background:white;
+  box-shadow:0px 12px 30px rgba(0,0,0,0.1);
+  transition:0.3s;
+}
+
+.event-card:hover{
+  transform:translateY(-8px);
+}
+
+/* Details Button */
+
+.details-btn{
+  width:100%;
+  padding:14px;
+  margin-top:25px;
+  border:none;
+  border-radius:16px;
+  background:linear-gradient(to right,#2563eb,#4f46e5);
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+}
+
+/* ============================= */
+/* Popup Overlay */
+/* ============================= */
+
+.details-overlay{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(15,23,42,0.6);
+  backdrop-filter:blur(10px);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+
+/* Popup Box */
+
+.details-page{
+  width:500px;
+  background:white;
+  padding:35px;
+  border-radius:28px;
+  box-shadow:0px 20px 60px rgba(0,0,0,0.3);
+  position:relative;
+}
+
+/* Popup Title */
+
+.details-page h2{
+  text-align:center;
+  margin-bottom:30px;
+  color:#0f172a;
+  font-weight:700;
 }
 
 /* Close Button */
-.close-btn {
-  position: absolute;   /* 🔥 Remove from form flow */
-  top: 15px;
-  right: 20px;
-  background: none;
-  border: none;
-  font-size: 22px;
-  color: red;
-  cursor: pointer;
+
+.close-btn{
+  position:absolute;
+  top:20px;
+  right:25px;
+  border:none;
+  background:none;
+  font-size:22px;
+  color:red;
+  cursor:pointer;
 }
 
-.details-title {
-  margin-bottom: 20px;
+/* ============================= */
+/* Form Style */
+/* ============================= */
+
+.details-form{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+.details-form label{
+  font-size:14px;
+  font-weight:600;
+  color:#475569;
+}
+
+.details-form input,
+.details-form select{
+  padding:14px;
+  border-radius:14px;
+  border:1px solid #e2e8f0;
+  font-size:15px;
+}
+
+/* Payment Button */
+
+.pay-btn{
+  margin-top:20px;
+  padding:16px;
+  border:none;
+  border-radius:16px;
+  font-size:17px;
+  font-weight:700;
+  color:white;
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.pay-btn:hover{
+  transform:translateY(-3px);
+}
+
+/* ============================= */
+/* Success Popup */
+/* ============================= */
+
+.success-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.6);
+  backdrop-filter:blur(10px);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+
+.success-box{
+  width:420px;
+  background:white;
+  padding:35px;
+  border-radius:25px;
+  text-align:center;
+}
+
+.receipt-btn{
+  width:100%;
+  margin-top:20px;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  background:#2563eb;
+  color:white;
+  font-weight:600;
+}
+
+.done-btn{
+  width:100%;
+  margin-top:15px;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  background:#22c55e;
+  color:white;
+  font-weight:600;
 }

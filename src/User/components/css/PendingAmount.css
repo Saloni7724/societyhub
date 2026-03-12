@@ -11,7 +11,7 @@
   font-size: 24px;   /* slightly smaller */
   font-weight: 700;
   color: #1f2937;
-  margin-bottom: 25px;  /* reduced */
+  margin-bottom: 30px;  /* reduced */
 }
 
 /* Grid Layout */
@@ -87,6 +87,7 @@
   color: #111827;
 }
 
+
 /* Badge */
 .pending-type {
   display: inline-block;
@@ -127,6 +128,8 @@
   background: #9ca3af;
   cursor: not-allowed;
 }
+
+
 
 /* Responsive */
 @media (max-width: 768px) {

@@ -1,135 +1,215 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./css/Complaint.css";
 import { FaPaperPlane, FaExclamationTriangle } from "react-icons/fa";
 
+import { db } from "../Backend/firebase-init";
+import {
+  collection,
+  addDoc,
+  query,
+  where,
+  onSnapshot
+} from "firebase/firestore";
+
 const Complaint = () => {
-  // ✅ Hidden Logged-in User Info
-  const userData = {
-    name: "Patel Mansi",
-    flat: "A-101",
-  };
+
+  const societyId = localStorage.getItem("societyId");
+  const userName = localStorage.getItem("userName");
+  const userFlat = localStorage.getItem("userFlat");
 
   const [formData, setFormData] = useState({
     category: "",
     priority: "",
-    message: "",
+    message: ""
   });
 
-  // Handle Change
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const [complaints, setComplaints] = useState([]);
 
-  // Submit Complaint
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  /* ========================= */
+  /* Realtime Complaints */
+  /* ========================= */
 
-    // ✅ Complaint Data with Auto Name + Flat
-    const complaintData = {
-      residentName: userData.name,
-      flatNumber: userData.flat,
-      category: formData.category,
-      priority: formData.priority,
-      complaintMessage: formData.message,
-      date: new Date().toLocaleString(),
-    };
+  useEffect(() => {
 
-    console.log("✅ Complaint Submitted:", complaintData);
+    if (!societyId) return;
 
-    // ✅ Show Full Complaint Message (Name + Flat)
-    alert(
-      `✅ Complaint Submitted Successfully!\n\n` +
-        `👤 Name: ${userData.name}\n` +
-        `🏠 Flat No: ${userData.flat}\n\n` +
-        `📌 Category: ${formData.category}\n` +
-        `⚡ Priority: ${formData.priority}\n\n` +
-        `📝 Complaint: ${formData.message}`
+    const q = query(
+      collection(db, "societies", societyId, "complaints"),
+      where("residentName", "==", userName),
+      where("flatNumber", "==", userFlat)
     );
 
-    // Reset Form
+    const unsubscribe = onSnapshot(q, snapshot => {
+      const list = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setComplaints(list);
+    });
+
+    return () => unsubscribe();
+
+  }, [societyId, userName, userFlat]);
+
+  /* ========================= */
+
+  const handleChange = e => {
     setFormData({
-      category: "",
-      priority: "",
-      message: "",
+      ...formData,
+      [e.target.name]: e.target.value
     });
   };
 
+  /* ========================= */
+  /* Submit Complaint */
+  /* ========================= */
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+
+    try {
+
+      const complaintData = {
+        residentName: userName,
+        flatNumber: userFlat,
+        category: formData.category,
+        priority: formData.priority,
+        complaintMessage: formData.message,
+        status: "Pending",
+        createdAt: new Date()
+      };
+
+      await addDoc(
+        collection(db, "societies", societyId, "complaints"),
+        complaintData
+      );
+
+      alert(`✅ Complaint Submitted Successfully
+
+Resident Name : ${userName}
+Flat Number : ${userFlat}`);
+
+      setFormData({
+        category: "",
+        priority: "",
+        message: ""
+      });
+
+    } catch (err) {
+      console.log(err);
+      alert("Error submitting complaint");
+    }
+  };
+
+  /* ========================= */
+
+  const getStatusColor = status => {
+    if (status === "Pending") return "orange";
+    if (status === "In Progress") return "blue";
+    if (status === "Resolved") return "green";
+    return "gray";
+  };
+
+  /* ========================= */
+
   return (
     <div className="complaint-page">
-      {/* Header */}
-      <div className="complaint-header">
-        <h2>💬 Register Complaint</h2>
-        <p>
-          Submit your issue here. Society management will take action soon.
-        </p>
-      </div>
 
-      {/* Complaint Form */}
       <div className="complaint-card">
-        <form onSubmit={handleSubmit}>
-          {/* Category + Priority */}
+
+        <h2>💬 Register Complaint</h2>
+
+        <form onSubmit={handleSubmit} className="complaint-form">
+
+          {/* Category + Priority Row */}
           <div className="form-row">
+
             <div className="input-box">
-              <label>Complaint Category</label>
+              <label>Category</label>
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
                 required
               >
-                <option value="">-- Select Category --</option>
-                <option value="Water Issue">🚰 Water Issue</option>
-                <option value="Electricity Issue">⚡ Electricity Issue</option>
-                <option value="Cleaning Issue">🧹 Cleaning Issue</option>
-                <option value="Security Issue">🛡️ Security Issue</option>
-                <option value="Other">📌 Other</option>
+                <option value="">Select Category</option>
+                <option>Water Issue</option>
+                <option>Electricity Issue</option>
+                <option>Cleaning Issue</option>
+                <option>Security Issue</option>
               </select>
             </div>
 
             <div className="input-box">
-              <label>Priority Level</label>
+              <label>Priority</label>
               <select
                 name="priority"
                 value={formData.priority}
                 onChange={handleChange}
                 required
               >
-                <option value="">-- Select Priority --</option>
-                <option value="Low">🟢 Low</option>
-                <option value="Medium">🟡 Medium</option>
-                <option value="High">🔴 High</option>
+                <option value="">Select Priority</option>
+                <option>Low</option>
+                <option>Medium</option>
+                <option>High</option>
               </select>
             </div>
+
           </div>
 
-          {/* Complaint Text */}
+          {/* Complaint Box */}
           <div className="input-box full">
-            <label>Complaint Details</label>
+            <label>Complaint Message</label>
             <textarea
               name="message"
-              placeholder="Write your complaint in detail..."
-              rows="5"
+              placeholder="Enter complaint details..."
               value={formData.message}
               onChange={handleChange}
               required
-            ></textarea>
+            />
           </div>
 
           {/* Note */}
           <div className="complaint-note">
-            <FaExclamationTriangle className="warn-icon" />
-            <span>
-              Complaint will automatically be submitted with your registered Name
-              and Flat Number.
-            </span>
+            <FaExclamationTriangle />
+            <span>Will be sent with your Name and Flat Number</span>
           </div>
 
-          {/* Submit Button */}
-          <button type="submit" className="submit-btn">
+          <button className="submit-btn">
             <FaPaperPlane /> Submit Complaint
           </button>
+
         </form>
       </div>
+
+      {/* ========================= */}
+      {/* Complaint Status List */}
+      {/* ========================= */}
+
+      <div className="complaint-card">
+        <h3>📋 My Complaint Status</h3>
+
+        {complaints.map(c => (
+          <div key={c.id} className="status-card">
+
+            <h4>{c.category}</h4>
+            <p>{c.complaintMessage}</p>
+
+            <p>
+              Status :
+              <b style={{
+                marginLeft: "10px",
+                color: getStatusColor(c.status)
+              }}>
+                {c.status}
+              </b>
+            </p>
+
+          </div>
+        ))}
+
+      </div>
+
     </div>
   );
 };

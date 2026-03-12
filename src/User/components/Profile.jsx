@@ -1,133 +1,129 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./css/Profile.css";
 import profileImg from "../assets/profile.png";
+import { db } from "../Backend/firebase-init";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 const Profile = () => {
-  // Profile Data State
-  const [user, setUser] = useState({
-    name: "Patel Mansi",
-    flat: "101",
-    contact: "9875046562",
-    profession: "Job",
-    gender: "Female",
-  });
+  const societyId = localStorage.getItem("societyId");
+  const userId = localStorage.getItem("userId");
 
-  // Edit Mode State
+  const [user, setUser] = useState(null);
   const [editMode, setEditMode] = useState(false);
+  const [formData, setFormData] = useState({});
 
-  // Form Data State
-  const [formData, setFormData] = useState(user);
+  // :white_check_mark: Fetch Member Data
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (!societyId || !userId) return;
 
-  // Handle Input Change
+      const docRef = doc(db, "societies", societyId, "members", userId);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        setUser(docSnap.data());
+        setFormData(docSnap.data());
+      } else {
+        console.log("No such member!");
+      }
+    };
+
+    fetchUser();
+  }, [societyId, userId]);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Save Updated Data
-  const handleSave = () => {
+  // :white_check_mark: Update Member Data
+  const handleSave = async () => {
+    const docRef = doc(db, "societies", societyId, "members", userId);
+    await updateDoc(docRef, formData);
+
     setUser(formData);
     setEditMode(false);
+    alert("Profile Updated Successfully :white_check_mark:");
   };
+
+  if (!user) return <h2 style={{ textAlign: "center" }}>Loading...</h2>;
 
   return (
     <div className="profile-page">
-      {/* Header */}
       <div className="profile-header">
         <h1>My Profile</h1>
         <p>Manage your personal details</p>
       </div>
 
-      {/* Profile Card */}
       <div className="profile-card">
-        {/* Left Side */}
         <div className="profile-left">
           <img src={profileImg} alt="Profile" className="profile-image" />
           <h2>{user.name}</h2>
           <p className="flat">Flat No: {user.flat}</p>
         </div>
 
-        {/* Right Side */}
         <div className="profile-right">
           <h3>Basic Information</h3>
 
-          {/* VIEW MODE */}
           {!editMode ? (
             <>
               <div className="info-box">
-                <span>📞 Contact</span>
-                <p>{user.contact}</p>
+                <span> Contact</span>
+                <p>{user.phone}</p>
               </div>
+
               <div className="info-box">
-                <span>💼 Profession</span>
+                <span> Profession</span>
                 <p>{user.profession}</p>
               </div>
 
               <div className="info-box">
-                <span>🚻 Gender</span>
-                <p>{user.gender}</p>
+                <span> Email</span>
+                <p>{user.email}</p>
               </div>
 
-              {/* Edit Button */}
-              <button
-                className="edit-btn"
-                onClick={() => setEditMode(true)}
-              >
+              <button className="edit-btn" onClick={() => setEditMode(true)}>
                 Edit Profile
               </button>
             </>
           ) : (
-            <>
-              {/* EDIT FORM MODE */}
-              <div className="edit-form">
-                <label>Name:</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                />
+            <div className="edit-form">
+              <label>Name:</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name || ""}
+                onChange={handleChange}
+              />
 
-                <label>Contact:</label>
-                <input
-                  type="text"
-                  name="contact"
-                  value={formData.contact}
-                  onChange={handleChange}
-                />
+              <label>Phone:</label>
+              <input
+                type="text"
+                name="phone"
+                value={formData.phone || ""}
+                onChange={handleChange}
+              />
 
-                <label>Profession:</label>
-                <input
-                  type="text"
-                  name="profession"
-                  value={formData.profession}
-                  onChange={handleChange}
-                />
+              <label>Profession:</label>
+              <input
+                type="text"
+                name="profession"
+                value={formData.profession || ""}
+                onChange={handleChange}
+              />
 
-                <label>Gender:</label>
-                <select
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleChange}
+              <div className="btn-group">
+                <button className="save-btn" onClick={handleSave}>
+                  Save
+                </button>
+
+                <button
+                  className="cancel-btn"
+                  onClick={() => setEditMode(false)}
                 >
-                  <option>Male</option>
-                  <option>Female</option>
-                </select>
-
-                {/* Buttons */}
-                <div className="btn-group">
-                  <button className="save-btn" onClick={handleSave}>
-                    Save
-                  </button>
-
-                  <button
-                    className="cancel-btn"
-                    onClick={() => setEditMode(false)}
-                  >
-                    Cancel
-                  </button>
-                </div>
+                  Cancel
+                </button>
               </div>
-            </>
+            </div>
           )}
         </div>
       </div>

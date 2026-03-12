@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./css/Dashboard.css";
 
+/* Icons */
 import {
-  FaUserCircle,
   FaUser,
   FaMoneyBillWave,
   FaTools,
@@ -15,162 +15,147 @@ import {
   FaBuilding,
 } from "react-icons/fa";
 
-/* ✅ Import Pages */
+/* Firebase */
+import { db, auth } from "../Backend/firebase-init";
+import { doc, getDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
+
+/* Pages */
 import Profile from "./Profile";
 import PendingAmount from "./PendingAmount";
 import EmergencyContact from "./EmergencyContact";
 import Events from "./Events";
 import PaymentMaintenance from "./PaymentMaintenance";
 import ResidentList from "./ResidentList";
-
-/* ✅ Import Notification Page */
-import Notifications from "./Notification";
-
-/* ✅ Import Complaint Page */
+import Notice from "./Notice";
 import Complaint from "./Complaint";
 
 const Dashboard = () => {
-   const [activePage, setActivePage] = useState("profile");
 
-  /* ✅ Logout Function */
+  const [activePage, setActivePage] = useState("profile");
+  const [societyName, setSocietyName] = useState("");
+
+  /* ⭐ Fetch Society Name From Firebase */
+  useEffect(() => {
+
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+
+      if (user) {
+
+        const userDoc = await getDoc(doc(db, "Users", user.uid));
+
+        if (userDoc.exists()) {
+
+          const societyId = userDoc.data().societyId;
+
+          const societyDoc = await getDoc(doc(db, "Societies", societyId));
+
+          if (societyDoc.exists()) {
+            setSocietyName(societyDoc.data().societyName);
+          }
+
+        }
+
+      }
+
+    });
+
+    return () => unsubscribe();
+
+  }, []);
+
+  /* Logout */
   const handleLogout = () => {
-    localStorage.removeItem("isAdminLoggedIn");
+    localStorage.clear();
     window.location.href = "/";
   };
 
   return (
     <div className="dashboard-container">
-      {/* ================= Sidebar ================= */}
+
+      {/* Sidebar */}
       <aside className="sidebar">
-        
-        {/* Logo */}
+
         <div className="sidebar-logo">
           <FaBuilding className="logo-icon" />
-          <h2>Society Name</h2>
+          <h2>{societyName || "Society Name"}</h2>
         </div>
 
-        {/* Menu */}
         <ul className="menu">
-          
-        
 
-          {/* My Profile */}
-          <li
-            className={activePage === "profile" ? "active" : ""}
-            onClick={() => setActivePage("profile")}
-          >
+          <li className={activePage === "profile" ? "active" : ""}
+              onClick={() => setActivePage("profile")}>
             <FaUser />
             <span>My Profile</span>
           </li>
 
-          {/* Pending Amount */}
-          <li
-            className={activePage === "pending" ? "active" : ""}
-            onClick={() => setActivePage("pending")}
-          >
+          <li className={activePage === "pending" ? "active" : ""}
+              onClick={() => setActivePage("pending")}>
             <FaMoneyBillWave />
             <span>Pending Amount</span>
           </li>
 
-          {/* Payment Maintenance */}
-          <li
-            className={activePage === "payment" ? "active" : ""}
-            onClick={() => setActivePage("payment")}
-          >
+          <li className={activePage === "payment" ? "active" : ""}
+              onClick={() => setActivePage("payment")}>
             <FaTools />
             <span>Payment Maintenance</span>
           </li>
 
-          {/* Emergency Contact */}
-          <li
-            className={activePage === "contact" ? "active" : ""}
-            onClick={() => setActivePage("contact")}
-          >
+          <li className={activePage === "contact" ? "active" : ""}
+              onClick={() => setActivePage("contact")}>
             <FaPhoneAlt />
             <span>Emergency Contact</span>
           </li>
 
-          {/* Events */}
-          <li
-            className={activePage === "events" ? "active" : ""}
-            onClick={() => setActivePage("events")}
-          >
+          <li className={activePage === "events" ? "active" : ""}
+              onClick={() => setActivePage("events")}>
             <FaCalendarAlt />
             <span>Events</span>
           </li>
 
-          {/* Resident List */}
-          <li
-            className={activePage === "residents" ? "active" : ""}
-            onClick={() => setActivePage("residents")}
-          >
+          <li className={activePage === "residents" ? "active" : ""}
+              onClick={() => setActivePage("residents")}>
             <FaUsers />
             <span>Resident List</span>
           </li>
 
-          {/* Notification */}
-          <li
-            className={activePage === "notification" ? "active" : ""}
-            onClick={() => setActivePage("notification")}
-          >
+          <li className={activePage === "notice" ? "active" : ""}
+              onClick={() => setActivePage("notice")}>
             <FaBell />
-            <span>Notification</span>
+            <span>Notice</span>
           </li>
 
-          {/* ✅ Complaint */}
-          <li
-            className={activePage === "complain" ? "active" : ""}
-            onClick={() => setActivePage("complain")}
-          >
+          <li className={activePage === "complain" ? "active" : ""}
+              onClick={() => setActivePage("complain")}>
             <FaCommentDots />
             <span>Add Complaint</span>
           </li>
+
         </ul>
 
-        {/* Logout */}
         <div className="logout" onClick={handleLogout}>
           <FaSignOutAlt />
           <span>Logout</span>
         </div>
+
       </aside>
 
-      {/* ================= Main Content ================= */}
+      {/* Main Content */}
       <main className="main-content">
-
-        {/* Right Side Page Body */}
         <div className="page-body">
-          
-          {/* Dashboard Welcome */}
-          {activePage === "dashboard" && (
-            <h2>Welcome to Dashboard 🎉</h2>
-          )}
 
-          {/* Profile Page */}
           {activePage === "profile" && <Profile />}
-
-          {/* Pending Amount Page */}
           {activePage === "pending" && <PendingAmount />}
-
-          {/* Payment Maintenance Page */}
           {activePage === "payment" && <PaymentMaintenance />}
-
-          {/* Emergency Contact Page */}
           {activePage === "contact" && <EmergencyContact />}
-
-          {/* Events Page */}
           {activePage === "events" && <Events />}
-
-          {/* Resident List Page */}
           {activePage === "residents" && <ResidentList />}
-
-          {/* Notification Page */}
-          {activePage === "notification" && <Notifications />}
-
-          {/* ✅ Complaint Page Opens Here */}
+          {activePage === "notice" && <Notice />}
           {activePage === "complain" && <Complaint />}
 
         </div>
       </main>
+
     </div>
   );
 };

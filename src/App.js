@@ -1,19 +1,19 @@
 import { Routes, Route } from "react-router-dom";
 import './App.css';
 import LoginUser from "./User/components/LoginUser";
-import AddSociety from "./Admin/pages/AddSociety";
 import VisitorForm from "./Admin/pages/VisitorForm";
 import ProtectedRoute from "./Admin/pages/ProtectedRoute";
 import EmergencyContact from "./User/components/EmergencyContact";
 import Events from "./User/components/Events";
 import Profile from "./User/components/Profile";
 import Complaint from "./User/components/Complaint";
-import Notification from "./User/components/Notification";  
+import Notice from "./User/components/Notice";  
 import ResidentList from "./User/components/ResidentList";  
 import Dashboard from "./User/components/Dashboard1";
 import PendingAmount from "./User/components/PendingAmount";
 import PaymentMaintenance from "./User/components/PaymentMaintenance";
-import NotificationPopup from "./User/components/NotificationPopup";    
+import NotificationPopup from "./User/components/NotificationPopup";   
+ 
 
 // Admin Pages
 import Home from './Admin/pages/Home';
@@ -34,7 +34,7 @@ function App() {
   return (
     <Routes>
       {/* ✅ Default route → Home page */}
-      <Route path="/" element={<Home />} />
+       <Route path="/" element={<LoginUser />} />
 
       {/* ✅ Protected Admin Routes */}
       <Route
@@ -123,13 +123,13 @@ function App() {
       <Route path="/login-user" element={<LoginUser />} />
       <Route path="/add-society" element={<AddSociety />} />
     {/* User Routes */}
-    <Route path="/" element={<Home />} />
+   
     <Route path="/LoginUser" element={<LoginUser />} />
     <Route path="/EmergencyContact" element={<EmergencyContact />} />
     <Route path="/Events" element={<Events />} />
     <Route path="/Profile" element={<Profile />} />
     <Route path="/Complaint" element={<Complaint />} />
-    <Route path="/Notification" element={<Notification />} /> 
+    <Route path="/Notice" element={<Notice />} /> 
     <Route path="/ResidentList" element={<ResidentList />} />
     <Route path="/Dashboard" element={<Dashboard />} /> 
     <Route path="/PendingAmount" element={<PendingAmount />} />
@@ -138,7 +138,7 @@ function App() {
    
 
     {/* Admin Routes */}
-    <Route path="/" element={<ManageMembers />} />
+    
     <Route path="/Login" element={<Login />} />
     <Route path="/AddSociety" element={<AddSociety />} />
     <Route path="/add-events" element={<AddEvents />} />

@@ -3,37 +3,77 @@ import "../components/css/Login.css";
 import bgImage from "../assets/building.jpg";
 import { useNavigate } from "react-router-dom";
 
+/* Firebase */
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "../Backend/firebase-init";
+
 const LoginUser = () => {
-  const [username, setUsername] = useState("");
+
+  const [flat, setFlat] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
-  // ✅ Clear inputs on page load
+  /* Prevent autofill */
   useEffect(() => {
-    setUsername("");
+    setFlat("");
     setPassword("");
   }, []);
 
-  const handleLogin = (e) => {
-    e.preventDefault();
+  
+  /* ================= LOGIN FUNCTION ================= */
 
-    const correctUsername = "admin";
-    const correctPassword = "admin123";
+  const handleLogin = async (e) => {
+  e.preventDefault();
 
-    if (username === correctUsername && password === correctPassword) {
-      setError("");
+  if (!flat || !password) {
+    setError("Please enter Flat No and Password");
+    return;
+  }
 
-      // ✅ Store login status
-      localStorage.setItem("isAdminLoggedIn", "true");
+  try {
 
-      // ✅ Redirect to Dashboard Page
-      navigate("/dashboard");
-    } else {
-      setError("Invalid username or password ❌");
+    const societyId = localStorage.getItem("societyId"); // already stored from admin side
+
+    if (!societyId) {
+      setError("Society not found");
+      return;
     }
-  };
+
+    const membersQuery = query(
+      collection(db, "societies", societyId, "members"),
+      where("flat", "==", flat)
+    );
+
+    const membersSnapshot = await getDocs(membersQuery);
+
+    if (membersSnapshot.empty) {
+      setError("Flat number not found ❌");
+      return;
+    }
+
+    const userDoc = membersSnapshot.docs[0];
+    const userData = userDoc.data();
+
+    if (userData.password !== password) {
+      setError("Incorrect password ❌");
+      return;
+    }
+
+    /* STORE USER DATA */
+    localStorage.setItem("userId", userDoc.id);
+    localStorage.setItem("isUserLoggedIn", "true");
+    localStorage.setItem("memberName", userData.name || "");
+    localStorage.setItem("flatNumber", userData.flat || "");
+
+    navigate("/Dashboard");
+
+  } catch (err) {
+    console.error("Login Error:", err);
+    setError("Login failed. Try again.");
+  }
+};
 
   return (
     <div
@@ -42,18 +82,21 @@ const LoginUser = () => {
     >
       <div className="login-card">
         <h1 className="welcome">Welcome!</h1>
-        <h2 className="login-title">Login</h2>
+        <h2 className="login-title">User Login</h2>
 
         <form onSubmit={handleLogin} autoComplete="off">
+
+          <input type="text" style={{ display: "none" }} />
+          <input type="password" style={{ display: "none" }} />
+
           <div className="input-group">
-            <label>Username</label>
+            <label>Flat No</label>
             <input
               type="text"
-              name="username"
+              placeholder="Enter Flat No"
+              value={flat}
+              onChange={(e) => setFlat(e.target.value)}
               autoComplete="off"
-              placeholder="Enter username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>
@@ -62,11 +105,10 @@ const LoginUser = () => {
             <label>Password</label>
             <input
               type="password"
-              name="password"
-              autoComplete="new-password"
-              placeholder="Enter password"
+              placeholder="Enter Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
               required
             />
           </div>
@@ -76,6 +118,7 @@ const LoginUser = () => {
           </button>
 
           {error && <p className="error-text">{error}</p>}
+
         </form>
       </div>
     </div>

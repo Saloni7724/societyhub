@@ -163,16 +163,7 @@
 /* ===============================
    Responsive Design
 ================================ */
-@media (max-width: 900px) {
-  .sidebar {
-    width: 200px;
-  }
 
-  .menu li {
-    font-size: 14px;
-    padding: 10px;
-  }
-}
 
 @media (max-width: 650px) {
   .dashboard-container {

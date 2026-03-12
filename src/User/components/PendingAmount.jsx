@@ -1,108 +1,153 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./css/PendingAmount.css";
 
+/* Firebase */
+import { db } from "../Backend/firebase-init";
+import {
+  collection,
+  getDocs,
+  updateDoc,
+  doc,
+  addDoc,
+  serverTimestamp
+} from "firebase/firestore";
+
 const PendingAmount = () => {
-  // ✅ Store Paid Status
-  const [paidFund, setPaidFund] = useState(null);
 
-  // ✅ Pay Button Function
-  const handlePayNow = (fundName, amount) => {
-    alert(`Payment Successful ✅\nFund: ${fundName}\nAmount: ₹${amount}`);
+  const [dataList, setDataList] = useState([]);
 
-    // Mark as Paid
-    setPaidFund(fundName);
+  const societyId = localStorage.getItem("societyId");
+  const userFlat = localStorage.getItem("userFlat");
+
+  /* FETCH MAINTENANCE + EXPENSES */
+
+  const fetchData = async () => {
+
+    if (!societyId) return;
+
+    /* 🔵 Maintenance */ 
+    const maintenanceSnap = await getDocs(
+      collection(db, "societies", societyId, "maintenance")
+    );
+
+    const maintenanceData = maintenanceSnap.docs
+      .map(doc => ({
+        id: doc.id,
+        type: "Maintenance",
+        ...doc.data()
+      }))
+      .filter(m => m.flat === userFlat);
+
+    /* 🔴 Expenses (View Only) */
+    const expenseSnap = await getDocs(
+      collection(db, "societies", societyId, "expenses")
+    );
+
+    const expenseData = expenseSnap.docs.map(doc => ({
+      id: doc.id,
+      type: "Expense",
+      ...doc.data()
+    }));
+
+    setDataList([...maintenanceData, ...expenseData]);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  /* PAYMENT */
+
+  const handlePayNow = async (item) => {
+
+    if (item.type !== "Maintenance") return;
+
+    try {
+
+      await updateDoc(
+        doc(db, "societies", societyId, "maintenance", item.id),
+        {
+          status: "Paid",
+          paidAmount: item.pendingAmount,
+          pendingAmount: 0,
+          paymentMode: "Online"
+        }
+      );
+
+      /* Transaction Entry */
+      await addDoc(
+        collection(db, "societies", societyId, "transactions"),
+        {
+          date: new Date().toLocaleDateString(),
+          description: `Maintenance Payment (${item.month || ""})`,
+          flatNo: item.flat,
+          type: "Credit",
+          amount: Number(item.pendingAmount),
+          createdAt: serverTimestamp()
+        }
+      );
+
+      alert("Payment Successful ✅");
+
+      fetchData();
+
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
     <div className="pending-container">
-      <h2 className="pending-title">Pending Amount Details</h2>
+
+      <h2>Pending Payments</h2>
 
       <div className="pending-grid">
-        
-        {/* Card 1 */}
-        <div className="pending-card">
-          <p>Resident Name : <span>Rahul Sharma</span></p>
-          <p>Flat No : <span>A-101</span></p>
-          <p>
-            Pending For :{" "}
-            <span className="pending-type">Holi Celebration Fund 🎉</span>
-          </p>
-          <p>
-            Amount Due : <span className="amount">₹ 500</span>
-          </p>
 
-          {/* ✅ Button */}
-          <button
-            className="pay-btn"
-            onClick={() => handlePayNow("Holi Celebration Fund", 500)}
-            disabled={paidFund === "Holi Celebration Fund"}
-          >
-            {paidFund === "Holi Celebration Fund" ? "Paid ✅" : "Pay Now"}
-          </button>
-        </div>
+        {dataList.map(item => (
 
-        {/* Card 2 */}
-        <div className="pending-card">
-          <p>Resident Name : <span>Priya Patel</span></p>
-          <p>Flat No : <span>B-205</span></p>
-          <p>
-            Pending For :{" "}
-            <span className="pending-type">Monthly Maintenance 🏠</span>
-          </p>
-          <p>
-            Amount Due : <span className="amount">₹ 3000</span>
-          </p>
+          <div className="pending-card" key={item.id}>
 
-          <button
-            className="pay-btn"
-            onClick={() => handlePayNow("Monthly Maintenance", 3000)}
-            disabled={paidFund === "Monthly Maintenance"}
-          >
-            {paidFund === "Monthly Maintenance" ? "Paid ✅" : "Pay Now"}
-          </button>
-        </div>
+            <p>
+              Type :
+              <span>{item.type}</span>
+            </p>
 
-        {/* Card 3 */}
-        <div className="pending-card">
-          <p>Resident Name : <span>Amit Verma</span></p>
-          <p>Flat No : <span>C-302</span></p>
-          <p>
-            Pending For :{" "}
-            <span className="pending-type">Parking Charges 🚗</span>
-          </p>
-          <p>
-            Amount Due : <span className="amount">₹ 1500</span>
-          </p>
+            <p>
+              Title :
+              <span>
+                {item.title || item.month}
+              </span>
+            </p>
 
-          <button
-            className="pay-btn"
-            onClick={() => handlePayNow("Parking Charges", 1500)}
-            disabled={paidFund === "Parking Charges"}
-          >
-            {paidFund === "Parking Charges" ? "Paid ✅" : "Pay Now"}
-          </button>
-        </div>
+            <p>
+              Amount :
+              <span className="amount">
+                ₹ {item.amount || item.pendingAmount}
+              </span>
+            </p>
 
-        {/* Card 4 */}
-        <div className="pending-card">
-          <p>Resident Name : <span>Neha Singh</span></p>
-          <p>Flat No : <span>D-110</span></p>
-          <p>
-            Pending For :{" "}
-            <span className="pending-type">Ganesh Festival Donation 🙏</span>
-          </p>
-          <p>
-            Amount Due : <span className="amount">₹ 2000</span>
-          </p>
+            {item.type === "Maintenance" && (
+              <>
+                <p>
+                  Status :
+                  <span>{item.status}</span>
+                </p>
 
-          <button
-            className="pay-btn"
-            onClick={() => handlePayNow("Ganesh Festival Donation", 2000)}
-            disabled={paidFund === "Ganesh Festival Donation"}
-          >
-            {paidFund === "Ganesh Festival Donation" ? "Paid ✅" : "Pay Now"}
-          </button>
-        </div>
+                <button
+                  className="pay-btn"
+                  disabled={item.status === "Paid"}
+                  onClick={() => handlePayNow(item)}
+                >
+                  {item.status === "Paid"
+                    ? "Paid ✅"
+                    : "Pay Now"}
+                </button>
+              </>
+            )}
+
+          </div>
+
+        ))}
 
       </div>
     </div>
