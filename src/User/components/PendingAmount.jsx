@@ -25,7 +25,7 @@ const PendingAmount = () => {
 
     if (!societyId) return;
 
-    /* 🔵 Maintenance */ 
+    /* :large_blue_circle: Maintenance */
     const maintenanceSnap = await getDocs(
       collection(db, "societies", societyId, "maintenance")
     );
@@ -38,7 +38,7 @@ const PendingAmount = () => {
       }))
       .filter(m => m.flat === userFlat);
 
-    /* 🔴 Expenses (View Only) */
+    /* :red_circle: Expenses (View Only) */
     const expenseSnap = await getDocs(
       collection(db, "societies", societyId, "expenses")
     );
@@ -53,8 +53,9 @@ const PendingAmount = () => {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+  fetchData();
+// eslint-disable-next-line
+}, []);
 
   /* PAYMENT */
 
@@ -87,7 +88,7 @@ const PendingAmount = () => {
         }
       );
 
-      alert("Payment Successful ✅");
+      alert("Payment Successful :white_check_mark:");
 
       fetchData();
 
@@ -139,7 +140,7 @@ const PendingAmount = () => {
                   onClick={() => handlePayNow(item)}
                 >
                   {item.status === "Paid"
-                    ? "Paid ✅"
+                    ? "Paid :white_check_mark:"
                     : "Pay Now"}
                 </button>
               </>

@@ -232,11 +232,18 @@ const handleSubmit = async () => {
                   <td>₹{row.paidAmount}</td>
                   <td>₹{row.pendingAmount}</td>
                   <td>{row.dueDate}</td>
-                  <td>
-                    <span className="status pending">
-                      {row.status}
-                    </span>
-                  </td>
+                 <td>
+  {row.status === "Pending" ? (
+    <button
+      className="pay-btn"
+      onClick={() => payMaintenance(row)}
+    >
+      Pay
+    </button>
+  ) : (
+    <span className="status paid">Paid</span>
+  )}
+</td>
                 </tr>
               ))
             )}

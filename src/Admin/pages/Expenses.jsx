@@ -23,10 +23,12 @@ const Expenses = () => {
   const [expenses, setExpenses] = useState([]);
   const [editId, setEditId] = useState(null);
 const [totalMembers, setTotalMembers] = useState(0);
-  useEffect(() => {
+ useEffect(() => {
   ensureFinanceDoc();
   fetchExpenses();
   fetchMeta();
+
+// eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
   const [formData, setFormData] = useState({
     title: "",
@@ -83,6 +85,8 @@ useEffect(() => {
 
   useEffect(() => {
     fetchExpenses();
+    
+// eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ================= INPUT CHANGE =================
@@ -282,7 +286,11 @@ const handleSubmit = async (e) => {
   );
 
   // ⭐ If marking as Paid → create DEBIT transaction
-  if (newStatus === "Paid") {
+if (newStatus === "Paid") {
+
+  const exists = await transactionExists(expense.id);
+
+  if (!exists) {
     await addDoc(
       collection(db, "societies", societyId, "transactions"),
       {
@@ -292,10 +300,11 @@ const handleSubmit = async (e) => {
         type: "Debit",
         amount: Number(expense.amount),
         createdAt: new Date(),
+        expenseId: expense.id
       }
     );
 
-    // 🔻 Decrease balance
+    // decrease balance
     await updateDoc(
       doc(db, "societies", societyId, "meta", "finance"),
       {
@@ -303,6 +312,10 @@ const handleSubmit = async (e) => {
       }
     );
   }
+
+}
+
+   
 
   fetchExpenses();
 }}
@@ -385,6 +398,11 @@ const handleSubmit = async (e) => {
                       required
                     />
                   </div>
+                  {formData.amount && (
+  <p className="per-member">
+    Per Member: ₹{perMemberAmount}
+  </p>
+)}
                 </div>
 
                 <label>Date</label>

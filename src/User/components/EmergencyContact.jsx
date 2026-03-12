@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import "./css/EmergencyContact.css";
 
 import {
-  FaUserMd,
-  FaPhoneAlt,
+  FaUserMd
+  
 } from "react-icons/fa";
 
 /* Firebase */

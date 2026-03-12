@@ -49,11 +49,10 @@ const fetchTransactions = useCallback(async () => {
     } catch (error) {
       console.error("Error fetching transactions:", error);
     }
-  }, [societyId]);
-
-  useEffect(() => {
-    fetchTransactions();
-  }, []);
+ }, []);
+ useEffect(() => {
+  fetchTransactions();
+}, [fetchTransactions]);
 
   const filteredTransactions =
     filter === "All"

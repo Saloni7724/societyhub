@@ -1,7 +1,7 @@
 import "../css/ManageMembers.css";
 import AdminLayout from "../layout/AdminLayout";
  import { query, orderBy } from "firebase/firestore";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -80,14 +80,10 @@ useEffect(() => {
     const isLoggedIn = localStorage.getItem("isAdminLoggedIn");
     if (!isLoggedIn) navigate("/manage-members");
   }, [navigate]);
-useEffect(() => {
-  if (societyId) {
-    fetchMembers();
-  }
-}, [societyId, fetchMembers]);
+
   /* ------------------ FETCH MEMBERS ------------------ */
 /* ------------------ FETCH MEMBERS ------------------ */
-const fetchMembers = async () => {
+const fetchMembers = useCallback(async () => {
   if (!societyId) return;
 
   try {
@@ -101,11 +97,18 @@ const fetchMembers = async () => {
       id: doc.id,
       ...doc.data(),
     }));
+
     setMembers(list);
+
   } catch (error) {
     console.error("Error fetching members:", error);
   }
-};
+}, [societyId]);
+useEffect(() => {
+  if (societyId) {
+    fetchMembers();
+  }
+}, [societyId, fetchMembers]);
   /* ------------------ FILTER + SORT ------------------ */
   const filteredMembers = members
     .filter((m) =>
