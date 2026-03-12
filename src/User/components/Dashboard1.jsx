@@ -1,164 +1,227 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./css/Dashboard.css";
-
-/* Icons */
+import { FaPhoneAlt } from "react-icons/fa";
+import { useEffect } from "react";
+import { db } from "../../Admin/Backend/firebase-init";
+import { doc, getDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 import {
   FaUser,
   FaMoneyBillWave,
   FaTools,
-  FaPhoneAlt,
   FaCalendarAlt,
   FaUsers,
   FaBell,
-  
   FaCommentDots,
   FaSignOutAlt,
   FaBuilding,
 } from "react-icons/fa";
 
-/* Firebase */
-import { db, auth } from "../Backend/firebase-init";
-import { doc, getDoc } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
 
-/* Pages */
+/* :white_check_mark: Import Pages */
 import Profile from "./Profile";
 import PendingAmount from "./PendingAmount";
 import EmergencyContact from "./EmergencyContact";
 import Events from "./Events";
 import PaymentMaintenance from "./PaymentMaintenance";
 import ResidentList from "./ResidentList";
-import Notice from "./Notice";
+
+/* :white_check_mark: Import Notification Page */
+import Notifications from "./Notice";
+
+/* :white_check_mark: Import Complaint Page */
 import Complaint from "./Complaint";
 
 const Dashboard = () => {
-
-  const [activePage, setActivePage] = useState("profile");
+   const [activePage, setActivePage] = useState("profile");
+ const [user, setUser] = useState(null);
   const [societyName, setSocietyName] = useState("");
+   const navigate = useNavigate();
+  /* :white_check_mark: Check Login + Fetch User */
+ useEffect(() => {
+  const isLoggedIn = localStorage.getItem("isUserLoggedIn");
 
-  
+  if (!isLoggedIn) {
+    navigate("/login-user");
+    return;
+  }
 
-  /* ⭐ Fetch Society Name From Firebase */
-  useEffect(() => {
+  fetchUserData();
+}, [navigate]);
+  const fetchUserData = async () => {
+    const societyId = localStorage.getItem("societyId");
+    const userId = localStorage.getItem("userId");
 
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
 
-      if (user) {
+    try {
+      // :small_blue_diamond: Fetch Member
+      const memberRef = doc(db, "societies", societyId, "members", userId);
+      const memberSnap = await getDoc(memberRef);
 
-        const userDoc = await getDoc(doc(db, "Users", user.uid));
-
-        if (userDoc.exists()) {
-
-          const societyId = userDoc.data().societyId;
-
-          const societyDoc = await getDoc(doc(db, "Societies", societyId));
-
-          if (societyDoc.exists()) {
-            setSocietyName(societyDoc.data().societyName);
-          }
-
-        }
-
+      if (memberSnap.exists()) {
+        setUser(memberSnap.data());
       }
 
-    });
+      // :small_blue_diamond: Fetch Society Name
+     // :small_blue_diamond: Fetch Society Name
+const societyRef = doc(db, "societies", societyId);
+const societySnap = await getDoc(societyRef);
 
-    return () => unsubscribe();
+if (societySnap.exists()) {
+  setSocietyName(societySnap.data().name);   // :white_check_mark: FIXED
+}
 
-  }, []);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
-  /* Logout */
+  /* :white_check_mark: Logout */
   const handleLogout = () => {
-    localStorage.clear();
-    window.location.href = "/";
+    localStorage.removeItem("isUserLoggedIn");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userFlat");
+    navigate("/login-user");
   };
 
   return (
     <div className="dashboard-container">
-
-      {/* Sidebar */}
+      {/* ================= Sidebar ================= */}
       <aside className="sidebar">
 
-        <div className="sidebar-logo">
-          <FaBuilding className="logo-icon" />
-          <h2>{societyName || "Society Name"}</h2>
-        </div>
+        {/* Logo */}
+       <div className="sidebar-logo">
+  <FaBuilding className="logo-icon" />
+  <h2>{societyName || "Loading..."}</h2>
+</div>
 
+        {/* Menu */}
         <ul className="menu">
 
-          <li className={activePage === "profile" ? "active" : ""}
-              onClick={() => setActivePage("profile")}>
+
+
+          {/* My Profile */}
+          <li
+            className={activePage === "profile" ? "active" : ""}
+            onClick={() => setActivePage("profile")}
+          >
             <FaUser />
             <span>My Profile</span>
           </li>
 
-          <li className={activePage === "pending" ? "active" : ""}
-              onClick={() => setActivePage("pending")}>
+          {/* Pending Amount */}
+          <li
+            className={activePage === "pending" ? "active" : ""}
+            onClick={() => setActivePage("pending")}
+          >
             <FaMoneyBillWave />
             <span>Pending Amount</span>
           </li>
 
-          <li className={activePage === "payment" ? "active" : ""}
-              onClick={() => setActivePage("payment")}>
+          {/* Payment Maintenance */}
+          <li
+            className={activePage === "payment" ? "active" : ""}
+            onClick={() => setActivePage("payment")}
+          >
             <FaTools />
             <span>Payment Maintenance</span>
           </li>
 
-          <li className={activePage === "contact" ? "active" : ""}
-              onClick={() => setActivePage("contact")}>
+          {/* Emergency Contact */}
+          <li
+            className={activePage === "contact" ? "active" : ""}
+            onClick={() => setActivePage("contact")}
+          >
             <FaPhoneAlt />
             <span>Emergency Contact</span>
           </li>
 
-          <li className={activePage === "events" ? "active" : ""}
-              onClick={() => setActivePage("events")}>
+          {/* Events */}
+          <li
+            className={activePage === "events" ? "active" : ""}
+            onClick={() => setActivePage("events")}
+          >
             <FaCalendarAlt />
             <span>Events</span>
           </li>
 
-          <li className={activePage === "residents" ? "active" : ""}
-              onClick={() => setActivePage("residents")}>
+          {/* Resident List */}
+          <li
+            className={activePage === "residents" ? "active" : ""}
+            onClick={() => setActivePage("residents")}
+          >
             <FaUsers />
             <span>Resident List</span>
           </li>
 
-          <li className={activePage === "notice" ? "active" : ""}
-              onClick={() => setActivePage("notice")}>
+          {/* Notification */}
+          <li
+            className={activePage === "notification" ? "active" : ""}
+            onClick={() => setActivePage("notification")}
+          >
             <FaBell />
-            <span>Notice</span>
+            <span>Notification</span>
           </li>
 
-          <li className={activePage === "complain" ? "active" : ""}
-              onClick={() => setActivePage("complain")}>
+          {/* :white_check_mark: Complaint */}
+          <li
+            className={activePage === "complain" ? "active" : ""}
+            onClick={() => setActivePage("complain")}
+          >
             <FaCommentDots />
             <span>Add Complaint</span>
           </li>
-
         </ul>
 
+        {/* Logout */}
         <div className="logout" onClick={handleLogout}>
           <FaSignOutAlt />
           <span>Logout</span>
         </div>
-
       </aside>
 
-      {/* Main Content */}
+      {/* ================= Main Content ================= */}
       <main className="main-content">
+
+        {/* Right Side Page Body */}
         <div className="page-body">
 
+          {user && (
+  <h3 style={{ marginBottom: "16px" }}>
+    Welcome, {user.name} :wave:
+  </h3>
+)}
+          {/* Dashboard Welcome */}
+          {activePage === "dashboard" && (
+            <h2>Welcome to Dashboard :tada:</h2>
+          )}
+
+          {/* Profile Page */}
           {activePage === "profile" && <Profile />}
+
+          {/* Pending Amount Page */}
           {activePage === "pending" && <PendingAmount />}
+
+          {/* Payment Maintenance Page */}
           {activePage === "payment" && <PaymentMaintenance />}
+
+          {/* Emergency Contact Page */}
           {activePage === "contact" && <EmergencyContact />}
+
+          {/* Events Page */}
           {activePage === "events" && <Events />}
+
+          {/* Resident List Page */}
           {activePage === "residents" && <ResidentList />}
-          {activePage === "notice" && <Notice />}
+
+          {/* Notification Page */}
+          {activePage === "notification" && <Notifications />}
+
+          {/* :white_check_mark: Complaint Page Opens Here */}
           {activePage === "complain" && <Complaint />}
 
         </div>
       </main>
-
     </div>
   );
 };

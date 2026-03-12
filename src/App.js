@@ -125,7 +125,7 @@ function App() {
       <Route path="/add-society" element={<AddSociety />} />
     {/* User Routes */}
    
-    <Route path="/LoginUser" element={<LoginUser />} />
+    <Route path="/login-user" element={<LoginUser />} />
     <Route path="/EmergencyContact" element={<EmergencyContact />} />
     <Route path="/Events" element={<Events />} />
     <Route path="/Profile" element={<Profile />} />

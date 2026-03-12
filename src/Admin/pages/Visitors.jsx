@@ -27,7 +27,7 @@ const Visitors = () => {
   });
   const societyId = localStorage.getItem("societyId"); 
 
- const websiteURL = `http://192.168.0.111:3000/visitor-form?societyId=${societyId}`;
+ const websiteURL = `https://societyhub-cyan.vercel.app/visitor-form?societyId=${societyId}`;
 
   /* FETCH VISITORS */
   useEffect(() => {
