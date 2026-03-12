@@ -34,7 +34,7 @@ function App() {
   return (
     <Routes>
       {/* ✅ Default route → Home page */}
-       <Route path="/" element={<LoginUser />} />
+       <Route path="/" element={<Home />} />
 
       {/* ✅ Protected Admin Routes */}
       <Route
@@ -119,7 +119,7 @@ function App() {
       />
 
       {/* ✅ Public Routes */}
-      <Route path="/home" element={<Home />} />
+     
       <Route path="/login" element={<Login />} />
       <Route path="/login-user" element={<LoginUser />} />
       <Route path="/add-society" element={<AddSociety />} />
@@ -140,15 +140,8 @@ function App() {
 
     {/* Admin Routes */}
     
-    <Route path="/Login" element={<Login />} />
-    <Route path="/AddSociety" element={<AddSociety />} />
-    <Route path="/add-events" element={<AddEvents />} />
-    <Route path="/add-notice" element={<AddNotice />} />
-    <Route path="/maintenance" element={<Maintenance />} />
-    <Route path="/complaints" element={<Complaints />} />
-    <Route path="/visitors" element={<Visitors />} />
-    <Route path="/expenses" element={<Expenses />} />
-    <Route path="/transactions" element={<Transactions />} />
+    
+   
     
 
   </Routes>
