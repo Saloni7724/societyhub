@@ -119,6 +119,7 @@ function App() {
       />
 
       {/* ✅ Public Routes */}
+      <Route path="/home" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/login-user" element={<LoginUser />} />
       <Route path="/add-society" element={<AddSociety />} />

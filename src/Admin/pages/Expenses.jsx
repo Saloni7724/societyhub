@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import AdminLayout from "../layout/AdminLayout";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
-import { updateDoc } from "firebase/firestore";
+import { setDoc, getDoc } from "firebase/firestore";
 import {
   collection,
   addDoc,
   getDocs,
   deleteDoc,
   doc,
+  updateDoc,
+  query,
+  where,
   increment
 } from "firebase/firestore";
 import { db } from "../Backend/firebase-init";
@@ -18,7 +21,15 @@ const societyId = localStorage.getItem("societyId");
 const Expenses = () => {
   const [showModal, setShowModal] = useState(false);
   const [expenses, setExpenses] = useState([]);
-const [editId, setEditId] = useState(null);
+  const [editId, setEditId] = useState(null);
+const [totalMembers, setTotalMembers] = useState(0);
+ useEffect(() => {
+  ensureFinanceDoc();
+  fetchExpenses();
+  fetchMeta();
+
+// eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
   const [formData, setFormData] = useState({
     title: "",
     category: "",
@@ -27,7 +38,20 @@ const [editId, setEditId] = useState(null);
     assignTo: "All Members",
   });
 
-  
+  const fetchMeta = async () => {
+  const membersSnapshot = await getDocs(
+    collection(db, "societies", societyId, "members")
+  );
+  setTotalMembers(membersSnapshot.size);
+};
+const ensureFinanceDoc = async () => {
+  const financeRef = doc(db, "societies", societyId, "meta", "finance");
+  const snap = await getDoc(financeRef);
+
+  if (!snap.exists()) {
+    await setDoc(financeRef, { totalBalance: 0 });
+  }
+};
 
   const expensesRef = collection(db, "societies", societyId, "expenses");
 
@@ -40,9 +64,29 @@ const [editId, setEditId] = useState(null);
     }));
     setExpenses(expenseList);
   };
+useEffect(() => {
+  const init = async () => {
+    await ensureFinanceDoc();
+    await fetchExpenses();
+    await fetchMeta();
+  };
+
+  init();
+
+// eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
+  
+  // ================= LIVE PER-MEMBER SPLIT =================
+  const perMemberAmount = useMemo(() => {
+    const amt = Number(formData.amount || 0);
+    if (!amt || totalMembers <= 0) return 0;
+    return (amt / totalMembers).toFixed(2);
+  }, [formData.amount, totalMembers]);
 
   useEffect(() => {
     fetchExpenses();
+    
+// eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ================= INPUT CHANGE =================
@@ -53,11 +97,19 @@ const [editId, setEditId] = useState(null);
     });
   };
 
-  // ================= ADD CUSTOM GROUP =================
- 
+  // ================= PREVENT DOUBLE TRANSACTION =================
+  const transactionExists = async (expenseId) => {
+    const q = query(
+      collection(db, "societies", societyId, "transactions"),
+      where("expenseId", "==", expenseId)
+    );
+    const snap = await getDocs(q);
+    return !snap.empty;
+  };
 
-  // ================= ADD TO FIRESTORE =================
-  const handleSubmit = async (e) => {
+  // ================= SUBMIT =================
+// ================= SUBMIT =================
+const handleSubmit = async (e) => {
   e.preventDefault();
 
   const today = new Date().toISOString().split("T")[0];
@@ -234,7 +286,11 @@ const [editId, setEditId] = useState(null);
   );
 
   // ⭐ If marking as Paid → create DEBIT transaction
-  if (newStatus === "Paid") {
+if (newStatus === "Paid") {
+
+  const exists = await transactionExists(expense.id);
+
+  if (!exists) {
     await addDoc(
       collection(db, "societies", societyId, "transactions"),
       {
@@ -244,10 +300,11 @@ const [editId, setEditId] = useState(null);
         type: "Debit",
         amount: Number(expense.amount),
         createdAt: new Date(),
+        expenseId: expense.id
       }
     );
 
-    // 🔻 Decrease balance
+    // decrease balance
     await updateDoc(
       doc(db, "societies", societyId, "meta", "finance"),
       {
@@ -255,6 +312,10 @@ const [editId, setEditId] = useState(null);
       }
     );
   }
+
+}
+
+   
 
   fetchExpenses();
 }}
@@ -337,6 +398,11 @@ const [editId, setEditId] = useState(null);
                       required
                     />
                   </div>
+                  {formData.amount && (
+  <p className="per-member">
+    Per Member: ₹{perMemberAmount}
+  </p>
+)}
                 </div>
 
                 <label>Date</label>

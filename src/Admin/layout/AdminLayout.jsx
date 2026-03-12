@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FiUsers,
@@ -9,14 +9,11 @@ import {
   FiUserCheck,
   FiDollarSign,
   FiCreditCard,
-  FiChevronDown,
-  FiUser,
   FiLogOut,
+  FiMenu,
 } from "react-icons/fi";
 
-import { FiMenu } from "react-icons/fi";
 import { auth, db } from "../Backend/firebase-init";
-import { doc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { collection, query, where, getDocs } from "firebase/firestore";
 
@@ -25,20 +22,16 @@ import "./AdminLayout.css";
 
 const AdminLayout = ({ children, active }) => {
   const navigate = useNavigate();
-  const [showAdminMenu, setShowAdminMenu] = useState(false);
+
+  const [societyName, setSocietyName] = useState(
+    localStorage.getItem("societyName") || ""
+  );
+
+  const [loadingSociety, setLoadingSociety] = useState(
+    !localStorage.getItem("societyName")
+  );
 
   const [adminName, setAdminName] = useState("");
-  
-  const [societyName, setSocietyName] = useState(
-  localStorage.getItem("societyName") || ""
-);
-const [loadingSociety, setLoadingSociety] = useState(
-  !localStorage.getItem("societyName")
-);
-
-  //const [societyName, setSocietyName] = useState("Society Dashboard"); // ✅ MOVED HERE
-
-  const adminMenuRef = useRef(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   // 🔹 GET ADMIN NAME FROM LOCALSTORAGE
@@ -50,41 +43,46 @@ const [loadingSociety, setLoadingSociety] = useState(
   }, []);
 
   // 🔹 FETCH SOCIETY NAME FROM FIRESTORE
- useEffect(() => {
-  const unsubscribe = onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      try {
-        // Query societies collection where adminUid == logged in user uid
-        const q = query(
-          collection(db, "societies"),
-          where("adminUid", "==", user.uid)
-        );
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const q = query(
+            collection(db, "societies"),
+            where("adminUid", "==", user.uid)
+          );
 
-        const querySnapshot = await getDocs(q);
+          const querySnapshot = await getDocs(q);
 
-        if (!querySnapshot.empty) {
-          const societyDoc = querySnapshot.docs[0];
-          setSocietyName(societyDoc.data().name); // your field is "name"
-          localStorage.setItem("societyName", societyDoc.data().name);
-setLoadingSociety(false);
-         
+          if (!querySnapshot.empty) {
+            const societyDoc = querySnapshot.docs[0];
+            setSocietyName(societyDoc.data().name);
+            localStorage.setItem("societyName", societyDoc.data().name);
+            setLoadingSociety(false);
+          }
+        } catch (error) {
+          console.log("Error fetching society name:", error);
         }
-      } catch (error) {
-        console.log("Error fetching society name:", error);
       }
-    }
-  });
+    });
 
-  return () => unsubscribe();
-}, []);
+    return () => unsubscribe();
+  }, []);
+
+  // ✅ Loading UI AFTER hooks
+  if (loadingSociety) {
+    return <div style={{ padding: "20px" }}>Loading Society...</div>;
+  }
+
   return (
     <div className="admin-layout">
       {/* SIDEBAR */}
-      
       <aside className={`admin-sidebar ${sidebarOpen ? "open" : "closed"}`}>
-        
         <div className="avatar">
-         <span><img src={adminProfile} alt="Admin" /></span> 
+          <span>
+            <img src={adminProfile} alt="Admin" />
+          </span>
+          <p>{adminName}</p>
         </div>
 
         <nav>
@@ -92,14 +90,14 @@ setLoadingSociety(false);
             className={`menu-item ${active === "members" ? "active" : ""}`}
             onClick={() => navigate("/manage-members")}
           >
-            <FiUsers /><span>Manage Members</span>
+            <FiUsers /> <span>Manage Members</span>
           </button>
 
           <button
             className={`menu-item ${active === "events" ? "active" : ""}`}
             onClick={() => navigate("/add-events")}
           >
-            <FiCalendar /><span>Add Events</span>
+            <FiCalendar /> <span>Add Events</span>
           </button>
 
           <button
@@ -113,7 +111,7 @@ setLoadingSociety(false);
             className={`menu-item ${active === "maintenance" ? "active" : ""}`}
             onClick={() => navigate("/maintenance")}
           >
-            <FiTool /> <span> Maintenance</span>
+            <FiTool /> <span>Maintenance</span>
           </button>
 
           <button
@@ -159,16 +157,17 @@ setLoadingSociety(false);
 
       {/* MAIN */}
       <main className="admin-main">
-       <header className="admin-header">
-  <div className="header-left">
-    <FiMenu
-      className="hamburger"
-      onClick={() => setSidebarOpen(!sidebarOpen)}
-    />
-    <h2>{societyName}</h2>
-  </div>
-</header>
-        {children}
+        <header className="admin-header">
+          <div className="header-left">
+            <FiMenu
+              className="hamburger"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+            />
+            <h2>{societyName}</h2>
+          </div>
+        </header>
+
+        <div className="admin-content">{children}</div>
       </main>
     </div>
   );

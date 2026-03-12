@@ -3,31 +3,83 @@ import AdminLayout from "../layout/AdminLayout";
 import "../css/Maintenance.css";
 import { FiX } from "react-icons/fi";
 import { db } from "../Backend/firebase-init";
-
 import {
   collection,
   addDoc,
   onSnapshot,
   serverTimestamp,
-  getDocs
+  getDocs,
+  doc,
+  updateDoc,
+  increment
 } from "firebase/firestore";
 const societyId = localStorage.getItem("societyId");
 const Maintenance = () => {
   const [showModal, setShowModal] = useState(false);
   const [rows, setRows] = useState([]);
-
+const [error, setError] = useState("");
   const [formData, setFormData] = useState({
   title: "",
   date: "",
   status: "Upcoming",
   amount: "100",
   targetType: "All",
+  profession: "",
+  month: ""
 });
 
-  const [error, setError] = useState("");
+
+
+const payMaintenance = async (row, paidBy = "admin") => {
+  try {
+    const maintenanceRef = doc(
+      db,
+      "societies",
+      societyId,
+      "maintenance",
+      row.id
+    );
+
+    const paymentAmount = Number(row.pendingAmount);
+
+    // 1️⃣ Update maintenance
+    await updateDoc(maintenanceRef, {
+      paidAmount: Number(row.paidAmount) + paymentAmount,
+      pendingAmount: 0,
+      status: "Paid"
+    });
+
+    // 2️⃣ Add transaction
+    await addDoc(
+      collection(db, "societies", societyId, "transactions"),
+      {
+        date: new Date().toLocaleDateString(),
+        description: `Maintenance Payment - ${row.month}`,
+        category: "Maintenance",
+        flatNo: row.flat,
+        paymentMethod: paidBy === "admin" ? "Cash" : "Online", // ⭐ key logic
+        type: "Credit",
+        amount: paymentAmount,
+        createdAt: serverTimestamp()
+      }
+    );
+     await updateDoc(
+      doc(db, "societies", societyId, "meta", "finance"),
+      { totalBalance: increment(paymentAmount) }
+    );
+
+    alert("Maintenance paid successfully");
+
+  } catch (error) {
+    console.error("Payment failed:", error);
+  }
+};
+
+
+ 
 
   /* 🔥 FETCH DATA REALTIME */
- useEffect(() => {
+useEffect(() => {
   if (!societyId) return;
 
   const unsubscribe = onSnapshot(
@@ -42,7 +94,9 @@ const Maintenance = () => {
   );
 
   return () => unsubscribe();
-}, [societyId]);
+
+// eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
 
   /* OPEN / CLOSE MODAL */
   const openModal = () => {
@@ -178,11 +232,18 @@ const handleSubmit = async () => {
                   <td>₹{row.paidAmount}</td>
                   <td>₹{row.pendingAmount}</td>
                   <td>{row.dueDate}</td>
-                  <td>
-                    <span className="status pending">
-                      {row.status}
-                    </span>
-                  </td>
+                 <td>
+  {row.status === "Pending" ? (
+    <button
+      className="pay-btn"
+      onClick={() => payMaintenance(row)}
+    >
+      Pay
+    </button>
+  ) : (
+    <span className="status paid">Paid</span>
+  )}
+</td>
                 </tr>
               ))
             )}

@@ -83,7 +83,7 @@ const PaymentMaintenance = () => {
 
           <thead>
             <tr>
-             
+
               <th>MONTH</th>
               <th>AMOUNT</th>
               <th>MODE</th>

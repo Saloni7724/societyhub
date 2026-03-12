@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import AdminLayout from "../layout/AdminLayout";
 import {
   collection,
@@ -16,13 +16,17 @@ const Transactions = () => {
   const [balance, setBalance] = useState(0);
   const [filter, setFilter] = useState("All");
 
-  const fetchTransactions = async () => {
-    const q = query(
-      collection(db, "societies", societyId, "transactions"),
-      orderBy("createdAt", "desc")
-    );
+const fetchTransactions = useCallback(async () => {
+    if (!societyId) return;
 
-    const snapshot = await getDocs(q);
+    try {
+      // 1️⃣ Fetch manual transactions
+      const transactionQuery = query(
+        collection(db, "societies", societyId, "transactions"),
+        orderBy("createdAt", "desc")
+      );
+
+    const snapshot = await getDocs(transactionQuery);
     const list = snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
@@ -40,12 +44,15 @@ const Transactions = () => {
       }
     });
 
-    setBalance(total);
-  };
+      setBalance(total);
 
-  useEffect(() => {
-    fetchTransactions();
-  }, []);
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+    }
+ }, []);
+ useEffect(() => {
+  fetchTransactions();
+}, [fetchTransactions]);
 
   const filteredTransactions =
     filter === "All"
