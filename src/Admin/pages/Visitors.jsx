@@ -24,9 +24,8 @@ const Visitors = () => {
     flat: "",
     purpose: "",
   });
-
-  const societyId = localStorage.getItem("societyId");
-  const websiteURL = `https://societyhub-cyan.vercel.app/visitor-form?societyId=${societyId}`;
+const societyId = localStorage.getItem("societyId"); 
+const websiteURL = `https://societyhub-cyan.vercel.app/visitor-form?societyId=${societyId}`;
 
   // ✅ Fetch flats dynamically from Firestore
   useEffect(() => {
