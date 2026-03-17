@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import AdminLayout from "../layout/AdminLayout";
 import "../css/Visitors.css";
-
+import Select from "react-select";
 import { db } from "../Backend/firebase-init";
 import {
   collection,
@@ -13,89 +13,111 @@ import {
 } from "firebase/firestore";
 
 const Visitors = () => {
+  const [flatOptions, setFlatOptions] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [showQR, setShowQR] = useState(false);
   const [search, setSearch] = useState("");
-
   const [visitors, setVisitors] = useState([]);
-
   const [form, setForm] = useState({
     name: "",
     phone: "",
     flat: "",
     purpose: "",
   });
-  const societyId = localStorage.getItem("societyId"); 
+const societyId = localStorage.getItem("societyId"); 
+const websiteURL = `https://societyhub-cyan.vercel.app/visitor-form?societyId=${societyId}`;
 
- const websiteURL = `https://societyhub-cyan.vercel.app/visitor-form?societyId=${societyId}`;
-
-  /* FETCH VISITORS */
+  // ✅ Fetch flats dynamically from Firestore
   useEffect(() => {
-  if (!societyId) return;
+    if (!societyId) return;
 
-  const q = query(
-    collection(db, "societies", societyId, "visitors"),
-    orderBy("createdAt", "desc")
-  );
+    const q = collection(db, "societies", societyId, "members");
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const flatsSet = new Set();
 
-  const unsubscribe = onSnapshot(q, (snapshot) => {
-    const data = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    setVisitors(data);
-  });
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.flat) flatsSet.add(data.flat);
+      });
 
-  return () => unsubscribe(); // cleanup listener
-}, [societyId]);
+     const flatsArray = Array.from(flatsSet)
+  .sort((a, b) => {
+    // Split block and number
+    const [blockA, numA] = a.split("-"); 
+    const [blockB, numB] = b.split("-"); 
+    if (blockA === blockB) {
+      return parseInt(numA) - parseInt(numB); // sort by number within same block
+    }
+    return blockA.localeCompare(blockB); // sort by block
+  })
+  .map((flat) => ({ value: flat, label: flat }));
 
-  
+setFlatOptions(flatsArray);
+    });
 
-  /* HANDLE INPUT */
+    return () => unsubscribe();
+  }, [societyId]);
+
+  // ✅ Fetch visitors
+  useEffect(() => {
+    if (!societyId) return;
+
+    const q = query(
+      collection(db, "societies", societyId, "visitors"),
+      orderBy("createdAt", "desc")
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setVisitors(data);
+    });
+
+    return () => unsubscribe();
+  }, [societyId]);
+
+  // Input change
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  /* SUBMIT FORM */
+  // Flat select change
+  const handleFlatChange = (selectedOption) => {
+    setForm({ ...form, flat: selectedOption?.value || "" });
+  };
+
+  // Submit form
   const handleSubmit = async () => {
     const cleanPhone = form.phone.replace(/\s/g, "");
 
-    if (
-      !form.name ||
-      !form.flat ||
-      !form.purpose ||
-      cleanPhone.length !== 10
-    ) {
+    if (!form.name || !form.flat || !form.purpose || cleanPhone.length !== 10) {
       alert("Please fill all fields correctly");
       return;
     }
 
     try {
-     await addDoc(
-  collection(db, "societies", societyId, "visitors"), // subcollection path
-  {
-    name: form.name,
-    phone: cleanPhone,
-    flat: form.flat,
-    purpose: form.purpose,
-    createdAt: serverTimestamp(),
-  }
-);
+      await addDoc(collection(db, "societies", societyId, "visitors"), {
+        name: form.name,
+        phone: cleanPhone,
+        flat: form.flat,
+        purpose: form.purpose,
+        createdAt: serverTimestamp(),
+      });
 
       setForm({ name: "", phone: "", flat: "", purpose: "" });
       setShowForm(false);
- 
     } catch (error) {
       console.error("Error adding visitor:", error);
     }
   };
 
-  /* SEARCH FILTER */
+  // Filter visitors
   const filteredVisitors = visitors.filter((v) =>
     v.name?.toLowerCase().includes(search.toLowerCase())
   );
 
-const qrImage = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(websiteURL)}`;
+  const qrImage = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(
+    websiteURL
+  )}`;
 
   return (
     <AdminLayout active="visitors">
@@ -170,14 +192,21 @@ const qrImage = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=$
               />
 
               <label>Flat</label>
-              <input name="flat" value={form.flat} onChange={handleChange} />
+              <Select
+                options={flatOptions}
+                onChange={handleFlatChange}
+                value={flatOptions.find((f) => f.value === form.flat)}
+                placeholder="Select flat..."
+                isSearchable
+                menuPortalTarget={document.body}
+                menuPosition="fixed"
+                styles={{
+                  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                }}
+              />
 
               <label>Purpose</label>
-              <select
-                name="purpose"
-                value={form.purpose}
-                onChange={handleChange}
-              >
+              <select name="purpose" value={form.purpose} onChange={handleChange}>
                 <option value="">Select</option>
                 <option>Friend</option>
                 <option>Delivery</option>
