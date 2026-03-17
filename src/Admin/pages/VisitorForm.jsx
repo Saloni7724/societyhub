@@ -118,21 +118,20 @@ const handleFlatChange = (selectedOption) => {
           }}
         />
 
-       <label>Flat</label>
-<Select
-  options={flatOptions}
-  onChange={handleFlatChange}
-  value={flatOptions.find((f) => f.value === form.flat)}
-  placeholder="Select flat..."
-  isSearchable
+ <label>Flat</label>
+              <Select
+                options={flatOptions}
+                onChange={handleFlatChange}
+                value={flatOptions.find((f) => f.value === form.flat)}
+                placeholder="Select flat..."
+                isSearchable
+                menuPortalTarget={document.body}
+                menuPosition="fixed"
+                styles={{
+                  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                }}
+              />
 
-  menuPortalTarget={document.body}
-  menuPosition="fixed"
-
-  styles={{
-    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-  }}
-/>
         <label>Purpose</label>
         <select name="purpose" value={form.purpose} onChange={handleChange}>
           <option value="">Select</option>
