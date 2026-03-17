@@ -226,9 +226,9 @@ useEffect(() => {
 
           </div>
 
-          <div className="events-grid1">
+          <div className="events-grid">
             {filteredEvents.map((event) => (
-              <div className="event-card" key={event.id}>
+              <div className="event-carda" key={event.id}>
                 <div className="event-top">
                   <h4>{event.title}</h4>
 

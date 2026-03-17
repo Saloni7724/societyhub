@@ -150,7 +150,7 @@ useEffect(() => {
 
   return (
     <AdminLayout active="notice">
-      <div className={`notice-page ${showModal ? "blurred" : ""}`}>
+      <div className={`notice-page1 ${showModal ? "blurred" : ""}`}>
         <div className="notice-header">
           <button
             className="add-notice-btn"

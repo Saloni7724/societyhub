@@ -192,7 +192,7 @@
   background: #4f46e5;
   color: #dc2626;
 }
-.edit-btn {
+.edit-btna {
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -204,7 +204,7 @@
   transition: 0.2s;
 }
 
-.edit-btn:hover {
+.edit-btna:hover {
   background: #4f46e5;
   color: white;
 }

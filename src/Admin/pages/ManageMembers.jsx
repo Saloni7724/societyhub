@@ -383,7 +383,7 @@ const handleSubmit = async () => {
                     <FiMoreHorizontal /> Read More
                   </button>
 
-        <span className="edit-btn" onClick={() => openEdit(m)}>
+        <span className="edit-btna" onClick={() => openEdit(m)}>
   ✏️
 </span>
 

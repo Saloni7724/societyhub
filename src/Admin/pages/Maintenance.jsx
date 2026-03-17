@@ -3,6 +3,7 @@ import AdminLayout from "../layout/AdminLayout";
 import "../css/Maintenance.css";
 import { FiX } from "react-icons/fi";
 import { db } from "../Backend/firebase-init";
+import { query, where } from "firebase/firestore";
 import {
   collection,
   addDoc,
@@ -118,19 +119,31 @@ useEffect(() => {
   /* 🔥 SUBMIT TO FIRESTORE */
 
 
+
+
 const handleSubmit = async () => {
+
   if (!formData.amount || !formData.profession || !formData.month) {
     setError("All fields are required");
     return;
   }
 
-  if (!societyId) {
-    setError("Society not found");
-    return;
-  }
-
   try {
-    // 🔹 Get Members from the society
+
+    // 🔹 CHECK IF MAINTENANCE FOR THIS MONTH ALREADY EXISTS
+    const q = query(
+      collection(db, "societies", societyId, "maintenance"),
+      where("month", "==", formData.month)
+    );
+
+    const existing = await getDocs(q);
+
+    if (!existing.empty) {
+      setError("Maintenance for this month is already generated");
+      return;
+    }
+
+    // 🔹 Get members
     const membersSnapshot = await getDocs(
       collection(db, "societies", societyId, "members")
     );
@@ -152,8 +165,9 @@ const handleSubmit = async () => {
       );
     }
 
-    // 🔹 Create Maintenance for each member in society
+    // 🔹 Generate maintenance
     for (let member of filteredMembers) {
+
       await addDoc(
         collection(db, "societies", societyId, "maintenance"),
         {
@@ -171,7 +185,7 @@ const handleSubmit = async () => {
         }
       );
 
-      // 🔔 Notification entry per society
+      // 🔔 Notification
       await addDoc(
         collection(db, "societies", societyId, "notifications"),
         {
@@ -182,12 +196,13 @@ const handleSubmit = async () => {
           read: false,
         }
       );
+
     }
-    
 
     closeModal();
+
   } catch (err) {
-    console.error("Error generating maintenance:", err);
+    console.error(err);
     setError("Failed to generate maintenance");
   }
 };

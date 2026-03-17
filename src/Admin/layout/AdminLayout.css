@@ -1,7 +1,8 @@
 /* ================= ADMIN LAYOUT ================= */
 .admin-layout {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   background: #f5f7fb;
 }
 
@@ -71,9 +72,13 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 25px 30px;
+  height: 100vh;
+  overflow: hidden;
+}
+.admin-content {
+  flex: 1;
   overflow-y: auto;
-  position: relative; /* ✅ ADD THIS */
+  padding: 25px 30px;
 }
 
 
@@ -82,9 +87,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
+  padding: 20px 30px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f5f7fb;
+  flex-shrink: 0;
 }
-
 .admin-header h2 {
   font-size: 24px;
   font-weight: 600;

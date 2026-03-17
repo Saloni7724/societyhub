@@ -55,3 +55,7 @@
 .visitor-card button:hover {
   background: #43a047;
 }
+.visitor-form-page {
+  position: relative;
+  z-index: 1;
+}

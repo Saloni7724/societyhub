@@ -134,11 +134,14 @@ const [statusFilter, setStatusFilter] = useState("All");
           <div className="complaint-card" key={c.id}>
             <div className="complaint-header">
               <div>
-                <h4>{c.title}</h4>
-                <p className="complaint-meta">
-                  Flat: {c.flat} • {c.date}
-                  <span className="tag">{c.category}</span>
-                </p>
+               <h4>{c.category}</h4>
+
+<p className="complaint-meta">
+  Flat: {c.flatNumber} • {c.residentName}
+  <span className="tag">{c.priority}</span>
+</p>
+
+<p className="complaint-text">{c.complaintMessage}</p>
               </div>
 
               <select
